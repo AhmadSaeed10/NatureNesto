@@ -50,6 +50,11 @@ export const banner = {
   headline: "Predict the future by creating it",
   secondary: "Transform Your Space with Us",
   cta: shopNow,
+  image: {
+    src: "/images/banner.webp",
+    alt: "",
+    flag: "Placeholder image. Replace with photography.",
+  },
 };
 
 export const needHelp = {
