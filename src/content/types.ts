@@ -101,3 +101,30 @@ export interface StubPageContent {
   title: string;
   todo: string;
 }
+
+/** Every category a product can be listed under: the shop pages plus the plant collections. */
+export type CatalogSlug =
+  | "pots-and-planters"
+  | "indoor-plants"
+  | "outdoor-plants"
+  | "pet-friendly"
+  | "easy-care"
+  | "orchids"
+  | "large-plants"
+  | "low-light"
+  | "plant-care";
+
+export type ProductBadge = "new" | "pet-safe" | "low-light" | "easy-care" | "bestseller";
+
+export interface Product {
+  id: string;
+  name: string;
+  /** Price in Pakistani rupees, whole numbers. */
+  price: number;
+  compareAtPrice?: number;
+  categories: CatalogSlug[];
+  image: ImageAsset;
+  size?: string;
+  badges?: ProductBadge[];
+  inStock: boolean;
+}

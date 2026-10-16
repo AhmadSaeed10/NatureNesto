@@ -87,6 +87,10 @@ All copy and link data lives in typed files under `src/content`. Components neve
 - Any `flag` field marks an open item for client confirmation. List them with `grep -rn "flag:" src/content`.
 - Old live URLs are redirected (308) to clean slugs via `src/content/redirects.ts`.
 
+## Product catalogue
+
+Category pages list products from Supabase when `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set, and fall back to the sample catalogue in `src/content/sample-products.ts` otherwise (or when a category has no live rows). A note on the page says when samples are showing. Setup and schema: `docs/SUPABASE.md`.
+
 ## Project structure
 
 ```
