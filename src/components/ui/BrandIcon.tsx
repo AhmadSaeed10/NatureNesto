@@ -48,6 +48,45 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M37.5 33c0 4-3.5 6.5-8.5 6.5H26" />
     </>
   ),
+  floorplan: (
+    <>
+      <path d="M8 8h32v32H8z" />
+      <path d="M8 22h12v18M20 22v-4M28 8v10h12M28 26h12" />
+      <path d="M12 44h24M12 42v4M36 42v4" />
+    </>
+  ),
+  leaf: (
+    <>
+      <path d="M10 38C10 20 22 9 40 8c0 18-11 30-29 30Z" />
+      <path d="M10 38 30 18M18 30h8M22 26v-6" />
+    </>
+  ),
+  poster: (
+    <>
+      <path d="M11 8h26v32H11z" />
+      <path d="M24 4v4M16 32c2-8 6-12 8-12s6 4 8 12M16 34h16" />
+      <circle cx="30" cy="15" r="2.5" />
+    </>
+  ),
+  gift: (
+    <>
+      <path d="M9 20h30v8H9zM12 28h24v13H12zM24 20v21" />
+      <path d="M24 20c-4-8-12-8-11-3 1 4 7 3 11 3ZM24 20c4-8 12-8 11-3-1 4-7 3-11 3Z" />
+    </>
+  ),
+  pot: (
+    <>
+      <path d="M12 22h24l-3 19H15l-3-19ZM10 18h28v4H10z" />
+      <path d="M18 30c2 2 4 2 6 0s4-2 6 0" />
+      <path d="M34 6l6 6-9 9-4 1 1-4 6-12Z" />
+    </>
+  ),
+  building: (
+    <>
+      <path d="M10 41V11h18v30M28 19h10v22M6 41h36" />
+      <path d="M15 17h3M21 17h3M15 24h3M21 24h3M15 31h3M21 31h3M32 26h2M32 33h2" />
+    </>
+  ),
 };
 
 interface BrandIconProps {
