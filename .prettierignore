@@ -1,0 +1,8 @@
+.next
+node_modules
+package-lock.json
+src/styles/tokens.css
+docs
+CLAUDE.md
+AGENTS.md
+.claude
