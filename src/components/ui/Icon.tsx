@@ -7,6 +7,9 @@ export type UiIconName =
   | "close"
   | "play"
   | "pause"
+  | "whatsapp"
+  | "phone"
+  | "mail"
   | "facebook"
   | "instagram"
   | "linkedin"
@@ -18,6 +21,21 @@ const PATHS: Record<UiIconName, ReactNode> = {
   menu: <path d="M4 9h16M4 15h16" />,
   play: <path d="M8 5.5v13l10-6.5-10-6.5Z" />,
   pause: <path d="M8.5 5v14M15.5 5v14" />,
+  whatsapp: (
+    <>
+      <path d="M4 20l1.3-4.2A8.5 8.5 0 1 1 8.4 19L4 20Z" />
+      <path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 .9c-1.2-.5-2.1-1.4-2.6-2.6l.9-1-1-2-1.8 1Z" />
+    </>
+  ),
+  phone: (
+    <path d="M6.5 4h3l1.5 4-2 1.3a10 10 0 0 0 5.7 5.7L16 13l4 1.5v3A2 2 0 0 1 18 19.5 15.5 15.5 0 0 1 4.5 6 2 2 0 0 1 6.5 4Z" />
+  ),
+  mail: (
+    <>
+      <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+      <path d="m4 7 8 6 8-6" />
+    </>
+  ),
   close: <path d="M6 6l12 12M18 6 6 18" />,
   facebook: (
     <path d="M14.5 8H17V4.5h-2.5A4.5 4.5 0 0 0 10 9v2H7.5v3.5H10V20h3.5v-5.5H16l.5-3.5h-3V9a1 1 0 0 1 1-1Z" />

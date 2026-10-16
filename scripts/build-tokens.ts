@@ -34,6 +34,7 @@ push("duration-route", TOKENS.motion.durationRoute);
 push("duration-sway", TOKENS.motion.swayDuration);
 push("sway-cycles", TOKENS.motion.swayCycles);
 push("duration-cue", TOKENS.motion.cueDuration);
+push("duration-pulse", TOKENS.motion.pulseDuration);
 push("size-tap", TOKENS.size.tapTarget);
 push("grain-opacity", TOKENS.texture.grainOpacity);
 
