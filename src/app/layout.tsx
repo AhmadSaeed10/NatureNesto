@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { FloatingWhatsApp } from "@/components/layout/FloatingWhatsApp";
 import { Footer } from "@/components/layout/Footer";
 import { HEADER_HOME_LINK_ID, Header } from "@/components/layout/Header";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { CursorFollower } from "@/components/motion/CursorFollower";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { needHelp } from "@/content/home";
 import { site } from "@/content/site";
 import { ui } from "@/content/ui";
 import { ANNOUNCEMENT_STORAGE_KEY, MAIN_CONTENT_ID } from "@/lib/constants";
@@ -23,6 +25,9 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
+
+const whatsappHref =
+  needHelp.channels.find((channel) => channel.kind === "whatsapp")?.href ?? `mailto:${site.email}`;
 
 // Runs before paint so a dismissed announcement never flashes on reload.
 const announcementScript = `try{if(sessionStorage.getItem("${ANNOUNCEMENT_STORAGE_KEY}"))document.documentElement.dataset.announcement="dismissed"}catch(e){}`;
@@ -47,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
           <Footer />
+          <FloatingWhatsApp href={whatsappHref} label={ui.whatsappFloat} />
           <CursorFollower label={ui.cursorView} />
         </MotionProvider>
       </body>
