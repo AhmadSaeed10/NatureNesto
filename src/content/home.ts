@@ -12,6 +12,10 @@ export const hero = {
   subline: "Welcome to Nature Nesto",
   secondary: "Transform Your Space with Us",
   cta: shopNow,
+  poster: {
+    src: "/images/hero-poster.webp",
+    flag: "Placeholder poster generated for the rebuild. Replace with a frame from the final hero video.",
+  },
   video: {
     src: "https://videos.pexels.com/video-files/3770017/3770017-hd_1920_1080_25fps.mp4",
     flag: "Inferred from an earlier fetch. Confirm usage rights and poster frame.",

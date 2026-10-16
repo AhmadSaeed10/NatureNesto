@@ -11,6 +11,7 @@ interface SplitHeadingProps {
   text: string;
   /** Words rendered in Instrument Serif italic, matched ignoring punctuation and case. */
   emphasis?: readonly string[];
+  id?: string;
   className?: string;
 }
 
@@ -20,7 +21,7 @@ const normalise = (word: string): string => word.replace(/[^\p{L}\p{N}'-]/gu, ""
  * Line by line mask reveal. Words are grouped into the lines the browser actually wraps
  * them onto, so the effect stays correct at every width. Screen readers get the plain text.
  */
-export function SplitHeading({ as = "h2", text, emphasis = [], className }: SplitHeadingProps) {
+export function SplitHeading({ as = "h2", text, emphasis = [], id, className }: SplitHeadingProps) {
   const reduced = useReducedMotion();
   const Tag = HEADINGS[as];
   const words = text.split(/\s+/).filter(Boolean);
@@ -50,6 +51,7 @@ export function SplitHeading({ as = "h2", text, emphasis = [], className }: Spli
   if (reduced) {
     return (
       <Tag
+        id={id}
         className={className}
         initial="hidden"
         whileInView="visible"
@@ -68,6 +70,7 @@ export function SplitHeading({ as = "h2", text, emphasis = [], className }: Spli
 
   return (
     <Tag
+      id={id}
       className={className}
       initial="hidden"
       whileInView="visible"
