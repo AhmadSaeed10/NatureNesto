@@ -42,6 +42,9 @@
   --duration-micro: 200ms;
   --duration-reveal: 750ms;
   --duration-route: 300ms;
+  --duration-sway: 5s;
+  --sway-cycles: 3;
+  --duration-cue: 2.4s;
   --size-tap: 44px;
   --grain-opacity: 0.04;
 }
