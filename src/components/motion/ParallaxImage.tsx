@@ -37,27 +37,30 @@ export function ParallaxImage({
   const y = useTransform(scrollYProgress, [0, 1], [-max, max]);
 
   return (
+    // The in-view trigger lives on an unclipped wrapper: a fully clipped element never
+    // reports as intersecting, so the reveal would never start.
     <motion.div
       ref={frame}
       className={cn("relative overflow-hidden", className)}
       initial="hidden"
       whileInView="visible"
       viewport={viewportOnce}
-      variants={reduced ? fade : clipReveal}
     >
-      <motion.div
-        className="absolute inset-x-0"
-        // Overscan by the drift distance so edges never show while moving.
-        style={{ top: drift ? -max : 0, bottom: drift ? -max : 0, y: drift ? y : 0 }}
-      >
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          sizes={sizes}
-          priority={priority}
-          className="object-cover"
-        />
+      <motion.div className="absolute inset-0" variants={reduced ? fade : clipReveal}>
+        <motion.div
+          className="absolute inset-x-0"
+          // Overscan by the drift distance so edges never show while moving.
+          style={{ top: drift ? -max : 0, bottom: drift ? -max : 0, y: drift ? y : 0 }}
+        >
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes={sizes}
+            priority={priority}
+            className="object-cover"
+          />
+        </motion.div>
       </motion.div>
     </motion.div>
   );
