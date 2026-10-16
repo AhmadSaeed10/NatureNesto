@@ -5,8 +5,7 @@ import type { SocialLink } from "@/content/types";
 import { ui } from "@/content/ui";
 import { Icon } from "@/components/ui/Icon";
 import { SocialLinks } from "@/components/ui/SocialLinks";
-
-export const ANNOUNCEMENT_STORAGE_KEY = "nn-announcement-dismissed";
+import { ANNOUNCEMENT_STORAGE_KEY } from "@/lib/constants";
 
 interface AnnouncementBarProps {
   message: string;

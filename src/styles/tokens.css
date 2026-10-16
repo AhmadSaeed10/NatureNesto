@@ -41,6 +41,7 @@
   --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-micro: 200ms;
   --duration-reveal: 750ms;
+  --duration-route: 300ms;
   --size-tap: 44px;
   --grain-opacity: 0.04;
 }

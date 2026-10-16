@@ -148,3 +148,18 @@
     scroll-behavior: auto !important;
   }
 }
+
+@theme {
+  --animate-route-fade: route-fade var(--duration-route) var(--ease-brand) both;
+
+  @keyframes route-fade {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+/* Hidden before first paint by the inline script in the root layout. */
+html[data-announcement="dismissed"] [data-announcement-bar] {
+  display: none;
+}
