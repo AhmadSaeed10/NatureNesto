@@ -3,7 +3,10 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
 import { HEADER_HOME_LINK_ID, Header } from "@/components/layout/Header";
 import { SkipLink } from "@/components/layout/SkipLink";
+import { CursorFollower } from "@/components/motion/CursorFollower";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import { site } from "@/content/site";
+import { ui } from "@/content/ui";
 import { ANNOUNCEMENT_STORAGE_KEY, MAIN_CONTENT_ID } from "@/lib/constants";
 import { fontVariables } from "@/lib/fonts";
 import "./globals.css";
@@ -32,17 +35,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: announcementScript }} />
       </head>
       <body className="flex min-h-dvh flex-col">
-        <SkipLink />
-        <AnnouncementBar
-          message={site.announcement}
-          socials={site.socials}
-          focusTargetId={HEADER_HOME_LINK_ID}
-        />
-        <Header />
-        <main id={MAIN_CONTENT_ID} tabIndex={-1} className="flex-1 focus:outline-none">
-          {children}
-        </main>
-        <Footer />
+        <MotionProvider>
+          <SkipLink />
+          <AnnouncementBar
+            message={site.announcement}
+            socials={site.socials}
+            focusTargetId={HEADER_HOME_LINK_ID}
+          />
+          <Header />
+          <main id={MAIN_CONTENT_ID} tabIndex={-1} className="flex-1 focus:outline-none">
+            {children}
+          </main>
+          <Footer />
+          <CursorFollower label={ui.cursorView} />
+        </MotionProvider>
       </body>
     </html>
   );

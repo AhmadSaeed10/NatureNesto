@@ -14,6 +14,7 @@ export const ui = {
   backHome: "Back to home",
   notFoundEyebrow: "404",
   notFoundTitle: "Page not found",
+  cursorView: "View",
   notFoundBody: "The page you are looking for does not exist or has moved.",
   flag: "New microcopy written for the rebuild. Client to review.",
 } as const;
