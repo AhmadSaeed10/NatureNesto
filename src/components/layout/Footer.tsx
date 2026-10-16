@@ -22,7 +22,7 @@ export function Footer() {
               <Logo tone="light" />
             </Link>
             <div>
-              <h2 className="eyebrow mb-3 text-surface">{footerVisit.heading}</h2>
+              <h2 className="mb-3 eyebrow text-surface">{footerVisit.heading}</h2>
               <address className="max-w-xs text-small text-surface not-italic">
                 {footerVisit.address}
               </address>
@@ -35,7 +35,7 @@ export function Footer() {
 
           {footerColumns.map((column) => (
             <nav key={column.heading} aria-labelledby={headingId(column.heading)}>
-              <h2 id={headingId(column.heading)} className="eyebrow mb-3 text-surface">
+              <h2 id={headingId(column.heading)} className="mb-3 eyebrow text-surface">
                 {column.heading}
               </h2>
               <ul>
