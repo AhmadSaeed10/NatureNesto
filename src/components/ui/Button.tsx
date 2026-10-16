@@ -21,7 +21,7 @@ type NativeButtonProps = BaseProps &
 export type ButtonProps = LinkButtonProps | NativeButtonProps;
 
 const BASE =
-  "group relative isolate inline-flex min-h-(--size-tap) items-center justify-center gap-2 font-medium transition-transform duration-(--duration-micro) ease-brand active:scale-[0.98]";
+  "group relative isolate inline-flex min-h-(--size-tap) items-center justify-center gap-2 font-medium whitespace-nowrap transition-transform duration-(--duration-micro) ease-brand active:scale-[0.98]";
 
 // Fill wipe: an ink layer scales in from the left on hover and keyboard focus.
 const WIPE =

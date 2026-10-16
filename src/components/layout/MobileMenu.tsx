@@ -58,7 +58,7 @@ export function MobileMenu({ links, cta, socials }: MobileMenuProps) {
         aria-label={ui.menuOpen}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="inline-flex size-(--size-tap) items-center justify-center rounded-pill border border-ink/30 text-ink transition-colors duration-(--duration-micro) ease-brand hover:border-ink lg:hidden"
+        className="inline-flex size-(--size-tap) items-center justify-center rounded-pill border border-ink/30 text-ink transition-colors duration-(--duration-micro) ease-brand hover:border-ink xl:hidden"
       >
         <Icon name="menu" />
       </button>
@@ -71,7 +71,7 @@ export function MobileMenu({ links, cta, socials }: MobileMenuProps) {
         onClick={(event) => {
           if (event.target === event.currentTarget) hide();
         }}
-        className="m-0 h-dvh max-h-none w-full max-w-none translate-y-3 bg-background p-0 text-ink opacity-0 transition-[opacity,translate,overlay,display] transition-discrete duration-(--duration-reveal) ease-brand backdrop:bg-ink/40 open:translate-y-0 open:opacity-100 lg:hidden starting:open:translate-y-3 starting:open:opacity-0"
+        className="m-0 h-dvh max-h-none w-full max-w-none translate-y-3 bg-background p-0 text-ink opacity-0 transition-[opacity,translate,overlay,display] transition-discrete duration-(--duration-reveal) ease-brand backdrop:bg-ink/40 open:translate-y-0 open:opacity-100 xl:hidden starting:open:translate-y-3 starting:open:opacity-0"
       >
         <div className="grain mx-auto flex min-h-full max-w-7xl flex-col px-4 pb-8 md:px-8">
           <div className="flex h-18 items-center justify-between">

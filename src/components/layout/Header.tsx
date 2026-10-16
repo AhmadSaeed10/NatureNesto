@@ -29,10 +29,14 @@ export function Header() {
           aria-label={ui.homeLink}
           className="inline-flex min-h-(--size-tap) items-center"
         >
-          <Logo className="origin-left transition-transform duration-(--duration-reveal) ease-brand group-data-[scrolled=true]/header:scale-[0.85]" />
+          <Logo
+            showTagline
+            taglineClassName="hidden sm:block"
+            className="origin-left transition-transform duration-(--duration-reveal) ease-brand group-data-[scrolled=true]/header:scale-[0.85]"
+          />
         </Link>
 
-        <nav aria-label={ui.primaryNav} className="hidden lg:block">
+        <nav aria-label={ui.primaryNav} className="hidden xl:block">
           <ul className="flex items-center gap-7">
             {headerNav.map((link) => (
               <li key={link.href}>
