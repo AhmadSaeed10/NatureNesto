@@ -10,16 +10,16 @@ Next.js 16 (App Router), React 19, TypeScript strict, Tailwind CSS v4, ESLint, P
 
 ## Scripts
 
-| Script | What it does |
-| --- | --- |
-| `npm run dev` | Start the dev server (regenerates tokens first) |
-| `npm run build` | Production build (regenerates tokens first). Must pass before any PR |
-| `npm run start` | Serve the production build |
-| `npm run lint` | ESLint. Must pass |
-| `npm run typecheck` | Generate route types, then `tsc --noEmit`. Must pass |
-| `npm run format` | Prettier write. `format:check` to verify only |
-| `npm run tokens` | Regenerate `src/styles/tokens.css` from `src/lib/tokens.ts` |
-| `npm run contrast` | WCAG contrast report for token pairs. Fails if an approved text pair drops below AA |
+| Script              | What it does                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| `npm run dev`       | Start the dev server (regenerates tokens first)                                     |
+| `npm run build`     | Production build (regenerates tokens first). Must pass before any PR                |
+| `npm run start`     | Serve the production build                                                          |
+| `npm run lint`      | ESLint. Must pass                                                                   |
+| `npm run typecheck` | Generate route types, then `tsc --noEmit`. Must pass                                |
+| `npm run format`    | Prettier write. `format:check` to verify only                                       |
+| `npm run tokens`    | Regenerate `src/styles/tokens.css` from `src/lib/tokens.ts`                         |
+| `npm run contrast`  | WCAG contrast report for token pairs. Fails if an approved text pair drops below AA |
 
 ## Design tokens
 
