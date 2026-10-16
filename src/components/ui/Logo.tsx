@@ -20,7 +20,7 @@ export function Logo({ src, tone = "ink", className }: LogoProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center border-[1.5px] px-2.5 pt-1 pb-0.5 font-serif text-h4 leading-none",
+        "inline-flex items-center border-[1.5px] px-2.5 pt-1 pb-0.5 font-serif text-h4 leading-none whitespace-nowrap",
         tone === "ink" ? "border-ink text-ink" : "border-background text-background",
         className,
       )}

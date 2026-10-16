@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { Cta, NavLink as NavLinkData, SocialLink } from "@/content/types";
 import { ui } from "@/content/ui";
 import { Button } from "@/components/ui/Button";
@@ -33,6 +33,23 @@ export function MobileMenu({ links, cta, socials }: MobileMenuProps) {
     dialogRef.current?.close();
   }, [pathname]);
 
+  // Native modal dialogs let Tab escape to the browser UI after the last control.
+  // Wrapping keeps keyboard users cycling inside the menu, per the APG dialog pattern.
+  const wrapFocus = (event: KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key !== "Tab") return;
+    const focusable = event.currentTarget.querySelectorAll<HTMLElement>("a[href], button");
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!first || !last) return;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
     <>
       <button
@@ -50,6 +67,7 @@ export function MobileMenu({ links, cta, socials }: MobileMenuProps) {
         ref={dialogRef}
         aria-label={ui.menuTitle}
         onClose={() => setOpen(false)}
+        onKeyDown={wrapFocus}
         onClick={(event) => {
           if (event.target === event.currentTarget) hide();
         }}

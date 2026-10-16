@@ -43,9 +43,12 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button href={headerCta.href} withArrow className="hidden sm:inline-flex">
-            {headerCta.label}
-          </Button>
+          {/* Wrapper owns visibility: Button sets its own display. */}
+          <div className="hidden sm:block">
+            <Button href={headerCta.href} withArrow>
+              {headerCta.label}
+            </Button>
+          </div>
           <MobileMenu links={headerNav} cta={headerCta} socials={site.socials} />
         </div>
       </div>

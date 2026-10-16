@@ -18,7 +18,11 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 pt-16 pb-8 md:px-8 lg:pt-24">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.2fr_repeat(3,1fr)]">
           <div className="flex flex-col gap-6">
-            <Link href="/" aria-label={ui.homeLink} className="inline-flex w-fit">
+            <Link
+              href="/"
+              aria-label={ui.homeLink}
+              className="inline-flex min-h-(--size-tap) w-fit items-center"
+            >
               <Logo tone="light" />
             </Link>
             <div>
