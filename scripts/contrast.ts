@@ -30,6 +30,25 @@ const PAIRS: Pair[] = [
     note: "CTA label on accent fill fails body AA",
   },
   { fg: "line", bg: "background", usage: "avoid", note: "Decorative dividers only" },
+  // Header and announcement bar
+  { fg: "ink", bg: "surface", usage: "body", note: "Announcement bar text" },
+  {
+    fg: "primaryDark",
+    bg: "background",
+    usage: "large",
+    note: "Focus ring and nav active (3:1 UI)",
+  },
+  {
+    fg: "primaryDark",
+    bg: "surface",
+    usage: "large",
+    note: "Focus ring on announcement bar (3:1 UI)",
+  },
+  // Footer (ink surface)
+  { fg: "background", bg: "ink", usage: "body", note: "Footer links" },
+  { fg: "surface", bg: "ink", usage: "body", note: "Footer headings, address, legal" },
+  { fg: "background", bg: "ink", usage: "large", note: "Footer focus ring (3:1 UI)" },
+  { fg: "primaryDark", bg: "ink", usage: "avoid", note: "Never use as focus ring on ink" },
 ];
 
 const channel = (v: number): number => {

@@ -30,6 +30,7 @@ for (const [name, t] of Object.entries(TOKENS.text)) {
 push("ease-brand", TOKENS.motion.ease);
 push("duration-micro", TOKENS.motion.durationMicro);
 push("duration-reveal", TOKENS.motion.durationReveal);
+push("duration-route", TOKENS.motion.durationRoute);
 push("size-tap", TOKENS.size.tapTarget);
 push("grain-opacity", TOKENS.texture.grainOpacity);
 

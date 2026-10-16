@@ -1,0 +1,53 @@
+import type { ReactNode, SVGProps } from "react";
+
+export type UiIconName =
+  "arrow-right" | "menu" | "close" | "facebook" | "instagram" | "linkedin" | "twitter";
+
+const PATHS: Record<UiIconName, ReactNode> = {
+  "arrow-right": <path d="M4 12h15M13 6l6 6-6 6" />,
+  menu: <path d="M4 9h16M4 15h16" />,
+  close: <path d="M6 6l12 12M18 6 6 18" />,
+  facebook: (
+    <path d="M14.5 8H17V4.5h-2.5A4.5 4.5 0 0 0 10 9v2H7.5v3.5H10V20h3.5v-5.5H16l.5-3.5h-3V9a1 1 0 0 1 1-1Z" />
+  ),
+  instagram: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <path d="M17.25 6.75h.01" />
+    </>
+  ),
+  linkedin: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
+      <path d="M8 10.5V16M8 7.75v.01M11.75 16v-5.5M11.75 13a2.5 2.5 0 0 1 5 0v3" />
+    </>
+  ),
+  twitter: <path d="M4.5 4.5h3.75l11.25 15h-3.75L4.5 4.5ZM19.5 4.5l-6.25 7M4.5 19.5l6.25-7" />,
+};
+
+interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {
+  name: UiIconName;
+  size?: number;
+}
+
+/** Decorative by default. Give the parent control an aria-label when the icon stands alone. */
+export function Icon({ name, size = 20, ...rest }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      {...rest}
+    >
+      {PATHS[name]}
+    </svg>
+  );
+}

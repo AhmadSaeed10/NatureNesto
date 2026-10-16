@@ -38,6 +38,7 @@ export const TOKENS = {
     ease: "cubic-bezier(0.22, 1, 0.36, 1)",
     durationMicro: "200ms",
     durationReveal: "750ms",
+    durationRoute: "300ms",
   },
   size: {
     tapTarget: "44px",
