@@ -45,6 +45,7 @@
   --duration-sway: 5s;
   --sway-cycles: 3;
   --duration-cue: 2.4s;
+  --duration-pulse: 1.8s;
   --size-tap: 44px;
   --grain-opacity: 0.04;
 }

@@ -33,10 +33,18 @@ export interface Service {
   featured?: boolean;
 }
 
+export interface ImageAsset {
+  src: string;
+  /** Empty when the image is decorative (for example, a linked tile already named by its label). */
+  alt: string;
+  flag?: string;
+}
+
 export interface Category {
   slug: string;
   title: string;
   href: string;
+  image: ImageAsset;
 }
 
 export interface Step {

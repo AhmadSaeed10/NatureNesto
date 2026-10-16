@@ -54,6 +54,7 @@ export const TOKENS = {
     swayDuration: "5s", // bamboo accent, one cycle
     swayCycles: "3",
     cueDuration: "2.4s", // hero scroll cue, one cycle
+    pulseDuration: "1.8s", // floating WhatsApp idle pulse, one cycle
   },
   size: {
     tapTarget: "44px",

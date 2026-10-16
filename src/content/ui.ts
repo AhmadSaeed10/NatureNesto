@@ -18,6 +18,7 @@ export const ui = {
   videoPause: "Pause background video",
   videoPlay: "Play background video",
   scrollCue: "Scroll to explore",
+  whatsappFloat: "Chat with us on WhatsApp",
   notFoundBody: "The page you are looking for does not exist or has moved.",
   flag: "New microcopy written for the rebuild. Client to review.",
 } as const;
