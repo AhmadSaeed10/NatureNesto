@@ -23,7 +23,12 @@ const PAIRS: Pair[] = [
   { fg: "primary", bg: "background", usage: "large", note: "Large text, icons only" },
   { fg: "primary", bg: "surface", usage: "large", note: "Large text, icons only" },
   { fg: "background", bg: "primaryDark", usage: "body", note: "CTA label on primaryDark fill" },
-  { fg: "background", bg: "accent", usage: "avoid", note: "CTA label on accent fill fails body AA" },
+  {
+    fg: "background",
+    bg: "accent",
+    usage: "avoid",
+    note: "CTA label on accent fill fails body AA",
+  },
   { fg: "line", bg: "background", usage: "avoid", note: "Decorative dividers only" },
 ];
 
@@ -34,7 +39,9 @@ const channel = (v: number): number => {
 
 const luminance = (hex: string): number => {
   const n = Number.parseInt(hex.slice(1), 16);
-  return 0.2126 * channel((n >> 16) & 255) + 0.7152 * channel((n >> 8) & 255) + 0.0722 * channel(n & 255);
+  return (
+    0.2126 * channel((n >> 16) & 255) + 0.7152 * channel((n >> 8) & 255) + 0.0722 * channel(n & 255)
+  );
 };
 
 const ratio = (a: string, b: string): number => {
