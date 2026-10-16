@@ -7,23 +7,28 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { CursorFollower } from "@/components/motion/CursorFollower";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { needHelp } from "@/content/home";
+import { seo } from "@/content/seo";
 import { site } from "@/content/site";
 import { ui } from "@/content/ui";
 import { ANNOUNCEMENT_STORAGE_KEY, MAIN_CONTENT_ID } from "@/lib/constants";
 import { fontVariables } from "@/lib/fonts";
+import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? site.url),
+  metadataBase: new URL(siteUrl()),
   title: {
     default: site.name,
     template: `%s | ${site.name}`,
   },
+  description: seo.home.description,
   openGraph: {
     siteName: site.name,
     locale: "en_PK",
     type: "website",
+    images: [{ url: seo.ogImage.url, width: 1200, height: 630, alt: seo.ogImage.alt }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 const whatsappHref =
