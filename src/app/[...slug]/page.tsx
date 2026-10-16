@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { StubPage } from "@/components/ui/StubPage";
+import { catalogCategories } from "@/content/catalog";
 import { stubPages } from "@/content/pages";
 import { seo } from "@/content/seo";
 import { pageMetadata } from "@/lib/seo";
@@ -10,7 +11,11 @@ import { pageMetadata } from "@/lib/seo";
 const findPage = (slug: string[]) => stubPages.find((page) => page.path === `/${slug.join("/")}`);
 
 // These paths have dedicated route folders with real content.
-const DEDICATED = new Set(["/contact", "/consultation"]);
+const DEDICATED = new Set([
+  "/contact",
+  "/consultation",
+  ...catalogCategories.map((category) => category.href),
+]);
 
 export function generateStaticParams() {
   return stubPages
