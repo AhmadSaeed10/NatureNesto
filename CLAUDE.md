@@ -24,7 +24,7 @@ The live site is not reachable from the build environment. All homepage copy, li
 ## Stack
 - Next.js 16 (App Router), React 19, TypeScript strict (no `any`, no non-null assertions without a comment)
 - Tailwind CSS v4, theme generated from `src/lib/tokens.ts`
-- Motion (framer-motion) for animation, Lenis for smooth scroll (optional, disabled under reduced motion)
+- Motion (`motion/react`) for animation. Lenis dropped in Phase 3: native scroll keeps keyboard and assistive tech behaviour intact
 - next/font, next/image, next/link everywhere
 - ESLint, Prettier, absolute imports via `@/`
 - Deploy: GitHub + Vercel
