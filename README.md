@@ -38,6 +38,47 @@ Type utilities: `text-display`, `text-h1` to `text-h4`, `text-lead`, `text-body`
 
 Texture: the page carries a fixed paper grain behind all content. Add `grain` to a surface for local grain.
 
+## Motion guide
+
+All motion values live in `src/lib/tokens.ts` (`TOKENS.motion`) and are exposed to components through `src/lib/motion.ts`. CSS transitions use the same curve via `ease-brand` and the `duration-(--duration-micro)` style utilities. Rules: animate only transform, opacity and clip-path; never layout properties.
+
+| Primitive                 | Use                        | Behaviour                                                                                                                            | Reduced motion           | Touch                 |
+| ------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ | --------------------- |
+| `Reveal`                  | Any block entering view    | Fade + rise 24px, once, at 15% in view                                                                                               | Opacity fade             | Same as desktop       |
+| `SplitHeading`            | Section and hero headlines | Words grouped into the lines the browser wraps, each line slides up from a mask with an 80ms stagger. `emphasis` words render italic | Plain text, opacity fade | Same as desktop       |
+| `Stagger` + `StaggerItem` | Card and tile groups       | Children fade up in sequence (`each`, default 80ms)                                                                                  | Opacity fade             | Same as desktop       |
+| `ParallaxImage`           | Feature images             | Clip-path inset reveal with scale 1.08 to 1, then scroll drift of up to 40px                                                         | Opacity fade, no drift   | Reveal only, no drift |
+| `Magnetic`                | Primary CTAs               | Pulls its child toward the pointer, max 8px                                                                                          | Off                      | Off                   |
+| `CursorFollower`          | Mounted once in the layout | Shows a "View" disc over any element with `data-cursor="view"`                                                                       | Off                      | Off                   |
+
+Examples:
+
+```tsx
+<SplitHeading as="h2" text={banner.headline} emphasis={["future"]} className="text-h1" />
+
+<Stagger as="ul" className="grid grid-cols-2 gap-4">
+  {items.map((item) => (
+    <StaggerItem as="li" key={item.slug}>...</StaggerItem>
+  ))}
+</Stagger>
+
+<ParallaxImage src={src} alt={alt} sizes="50vw" className="aspect-[4/5] rounded-card" />
+
+<Magnetic>
+  <Button href={cta.href} withArrow>{cta.label}</Button>
+</Magnetic>
+
+<Link href={category.href} data-cursor="view">...</Link>
+```
+
+Notes:
+
+- `MotionProvider` (root layout) sets `reducedMotion="user"`, so Motion keeps opacity but skips transforms when the OS asks for less motion. Each primitive also selects an explicit reduced variant.
+- Pointer effects only run on `(hover: hover) and (pointer: fine)` via `useRichMotion()` in `src/lib/hooks.ts`.
+- Special moments (torn paper, stamp edge, lace frame) appear once each. Do not reuse them as generic effects.
+- Smooth scrolling uses native CSS `scroll-behavior`, disabled under reduced motion. Lenis is not used.
+- `/dev/motion` demos every primitive (noindex). It is removed in Phase 8.
+
 ## Content editing
 
 All copy and link data lives in typed files under `src/content`. Components never hardcode copy.

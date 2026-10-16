@@ -7,6 +7,9 @@
  * After editing, run `npm run tokens` (also runs automatically before dev and build) to
  * regenerate src/styles/tokens.css, and `npm run contrast` to re-check WCAG ratios.
  */
+// Shared by CSS (as cubic-bezier) and Motion (as a tuple), so both feel identical.
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 export const TOKENS = {
   color: {
     primary: "#2E9B3A", // leaf green, from logo. Fills, icons, large text, decoration only.
@@ -35,10 +38,19 @@ export const TOKENS = {
     eyebrow: { size: "0.75rem", leading: "1.2", tracking: "0.18em" },
   },
   motion: {
-    ease: "cubic-bezier(0.22, 1, 0.36, 1)",
+    easeCurve: EASE,
+    ease: `cubic-bezier(${EASE.join(", ")})`,
     durationMicro: "200ms",
     durationReveal: "750ms",
     durationRoute: "300ms",
+    revealOffset: 24, // px
+    viewportAmount: 0.15,
+    headlineStagger: 0.08, // s
+    itemStagger: 0.08, // s, cards and tiles (CLAUDE.md range 60 to 100ms)
+    imageScaleFrom: 1.08,
+    parallaxMax: 40, // px
+    magneticMax: 8, // px
+    reducedFade: 0.3, // s
   },
   size: {
     tapTarget: "44px",
