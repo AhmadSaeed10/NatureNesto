@@ -2,6 +2,7 @@
   "name": "naturenesto",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "tokens": "node scripts/build-tokens.ts",
     "contrast": "node scripts/contrast.ts",
