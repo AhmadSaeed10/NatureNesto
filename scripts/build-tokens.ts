@@ -31,6 +31,9 @@ push("ease-brand", TOKENS.motion.ease);
 push("duration-micro", TOKENS.motion.durationMicro);
 push("duration-reveal", TOKENS.motion.durationReveal);
 push("duration-route", TOKENS.motion.durationRoute);
+push("duration-sway", TOKENS.motion.swayDuration);
+push("sway-cycles", TOKENS.motion.swayCycles);
+push("duration-cue", TOKENS.motion.cueDuration);
 push("size-tap", TOKENS.size.tapTarget);
 push("grain-opacity", TOKENS.texture.grainOpacity);
 

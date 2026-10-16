@@ -51,6 +51,9 @@ export const TOKENS = {
     parallaxMax: 40, // px
     magneticMax: 8, // px
     reducedFade: 0.3, // s
+    swayDuration: "5s", // bamboo accent, one cycle
+    swayCycles: "3",
+    cueDuration: "2.4s", // hero scroll cue, one cycle
   },
   size: {
     tapTarget: "44px",

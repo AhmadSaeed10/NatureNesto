@@ -1,11 +1,23 @@
 import type { ReactNode, SVGProps } from "react";
 
 export type UiIconName =
-  "arrow-right" | "menu" | "close" | "facebook" | "instagram" | "linkedin" | "twitter";
+  | "arrow-right"
+  | "arrow-down"
+  | "menu"
+  | "close"
+  | "play"
+  | "pause"
+  | "facebook"
+  | "instagram"
+  | "linkedin"
+  | "twitter";
 
 const PATHS: Record<UiIconName, ReactNode> = {
   "arrow-right": <path d="M4 12h15M13 6l6 6-6 6" />,
+  "arrow-down": <path d="M12 4v15M6 13l6 6 6-6" />,
   menu: <path d="M4 9h16M4 15h16" />,
+  play: <path d="M8 5.5v13l10-6.5-10-6.5Z" />,
+  pause: <path d="M8.5 5v14M15.5 5v14" />,
   close: <path d="M6 6l12 12M18 6 6 18" />,
   facebook: (
     <path d="M14.5 8H17V4.5h-2.5A4.5 4.5 0 0 0 10 9v2H7.5v3.5H10V20h3.5v-5.5H16l.5-3.5h-3V9a1 1 0 0 1 1-1Z" />
