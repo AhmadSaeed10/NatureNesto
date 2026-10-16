@@ -28,6 +28,9 @@ export interface Service {
   href: string;
   /** Path on the current live site, kept for 308 redirects. */
   legacyPath: string;
+  icon: IconName;
+  /** Styling only: receives the section's one botanical frame. */
+  featured?: boolean;
 }
 
 export interface Category {
@@ -43,7 +46,19 @@ export interface Step {
   flag?: string;
 }
 
-export type IconName = "plant" | "vase" | "table" | "guidance" | "community" | "support";
+export type IconName =
+  | "plant"
+  | "vase"
+  | "table"
+  | "guidance"
+  | "community"
+  | "support"
+  | "floorplan"
+  | "leaf"
+  | "poster"
+  | "gift"
+  | "pot"
+  | "building";
 
 export interface IconItem {
   text: string;

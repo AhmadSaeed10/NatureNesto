@@ -194,3 +194,21 @@ html[data-announcement="dismissed"] [data-announcement-bar] {
     }
   }
 }
+
+@theme {
+  --shadow-soft: 0 24px 48px -24px color-mix(in oklab, var(--color-ink) 40%, transparent);
+  --animate-leaf: sway var(--duration-reveal) ease-in-out 1;
+}
+
+/* Perforated stamp edge: a solid content box plus a grid of punched circles that only
+   shows in the padding ring, so bites appear along the edges and nowhere else. */
+@utility stamp {
+  --stamp-r: 7px;
+  --stamp-gap: 22px;
+  padding: var(--stamp-r);
+  mask:
+    linear-gradient(black 0 0) content-box,
+    radial-gradient(circle, transparent var(--stamp-r), black calc(var(--stamp-r) + 0.5px))
+      calc(var(--stamp-gap) / -2) calc(var(--stamp-gap) / -2) / var(--stamp-gap) var(--stamp-gap)
+      round;
+}
