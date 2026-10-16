@@ -4,6 +4,7 @@ import { StubPage } from "@/components/ui/StubPage";
 import { catalogCategories } from "@/content/catalog";
 import { stubPages } from "@/content/pages";
 import { seo } from "@/content/seo";
+import { services } from "@/content/services";
 import { pageMetadata } from "@/lib/seo";
 
 // Inner pages are stubs until content arrives. A dedicated route folder added later
@@ -14,6 +15,8 @@ const findPage = (slug: string[]) => stubPages.find((page) => page.path === `/${
 const DEDICATED = new Set([
   "/contact",
   "/consultation",
+  "/services",
+  ...services.map((service) => service.href),
   ...catalogCategories.map((category) => category.href),
 ]);
 
