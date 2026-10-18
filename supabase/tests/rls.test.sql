@@ -1,0 +1,89 @@
+-- RLS tests, one or more per table group, for anon, a signed-in non-staff user (the future
+-- customer), editor, support and admin. Run with `supabase test db` against a local stack.
+begin;
+create extension if not exists pgtap with schema extensions;
+
+select plan(24);
+
+-- Fixtures: one user per role. Inserting into auth.users fires handle_new_user(), which
+-- creates the profile; roles are then set directly (auth.uid() is null here, so trusted).
+insert into auth.users (id, email) values
+  ('00000000-0000-4000-a000-000000000001', 'owner@test.local'),
+  ('00000000-0000-4000-a000-000000000002', 'admin@test.local'),
+  ('00000000-0000-4000-a000-000000000003', 'editor@test.local'),
+  ('00000000-0000-4000-a000-000000000004', 'support@test.local'),
+  ('00000000-0000-4000-a000-000000000005', 'customer@test.local');
+update public.profiles set role = 'owner' where id = '00000000-0000-4000-a000-000000000001';
+update public.profiles set role = 'admin' where id = '00000000-0000-4000-a000-000000000002';
+update public.profiles set role = 'editor' where id = '00000000-0000-4000-a000-000000000003';
+update public.profiles set role = 'support' where id = '00000000-0000-4000-a000-000000000004';
+
+insert into public.products (id, handle, title, status) values
+  ('10000000-0000-4000-a000-000000000001', 'test-active', 'Active product', 'active'),
+  ('10000000-0000-4000-a000-000000000002', 'test-draft', 'Draft product', 'draft');
+insert into public.product_variants (product_id, price) values
+  ('10000000-0000-4000-a000-000000000001', 100000),
+  ('10000000-0000-4000-a000-000000000002', 100000);
+insert into public.pages (handle, title, status) values
+  ('test-published', 'Published', 'published'),
+  ('test-hidden', 'Hidden', 'draft');
+insert into public.site_settings (store_name, email, address)
+  select 'Test', 'test@test.local', 'Test' where not exists (select 1 from public.site_settings);
+insert into public.consultation_requests (source, name) values ('contact', 'Test lead');
+
+create function pg_temp.act_as(user_id uuid) returns void language sql as $$
+  select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated')::text, true);
+  select set_config('role', 'authenticated', true);
+$$;
+
+-- Anon -----------------------------------------------------------------------------------
+set local role anon;
+select is((select count(*)::int from public.products where handle like 'test-%'), 1, 'anon sees only active products');
+select is((select count(*)::int from public.product_variants v join public.products p on p.id = v.product_id where p.handle like 'test-%'), 1, 'anon sees variants of active products only');
+select is((select count(*)::int from public.pages where handle like 'test-%'), 1, 'anon sees only published pages');
+select ok((select count(*) from public.site_settings) >= 1, 'anon reads site settings');
+select is((select count(*)::int from public.profiles), 0, 'anon cannot read profiles');
+select is((select count(*)::int from public.staff_invites), 0, 'anon cannot read staff invites');
+select is((select count(*)::int from public.consultation_requests), 0, 'anon cannot read leads');
+select is((select count(*)::int from public.audit_log), 0, 'anon cannot read the audit log');
+select throws_ok($$ insert into public.products (handle, title) values ('anon-write', 'x') $$, '42501', null, 'anon cannot write products');
+select throws_ok($$ insert into public.consultation_requests (source, name) values ('contact', 'x') $$, '42501', null, 'anon cannot insert leads directly');
+reset role;
+
+-- Signed-in, not staff (customer) --------------------------------------------------------
+select pg_temp.act_as('00000000-0000-4000-a000-000000000005');
+select is((select count(*)::int from public.products where handle like 'test-%'), 1, 'customer sees only active products');
+select is((select count(*)::int from public.profiles), 1, 'customer reads only their own profile');
+select throws_ok($$ update public.profiles set role = 'owner' where id = '00000000-0000-4000-a000-000000000005' $$, '42501', null, 'customer cannot grant themselves a role');
+reset role;
+
+-- Editor ---------------------------------------------------------------------------------
+select pg_temp.act_as('00000000-0000-4000-a000-000000000003');
+select is((select count(*)::int from public.products where handle like 'test-%'), 2, 'editor sees drafts');
+select lives_ok($$ insert into public.products (handle, title) values ('editor-write', 'x') $$, 'editor can create products');
+select is((select count(*)::int from public.consultation_requests), 0, 'editor cannot read leads');
+select throws_ok($$ insert into public.redirects (source, destination) values ('/editor', '/x') $$, '42501', null, 'editor cannot change redirects');
+select is((select count(*)::int from public.staff_invites), 0, 'editor cannot read staff invites');
+reset role;
+
+-- Support --------------------------------------------------------------------------------
+select pg_temp.act_as('00000000-0000-4000-a000-000000000004');
+select ok((select count(*) from public.consultation_requests) >= 1, 'support reads leads');
+select throws_ok($$ insert into public.products (handle, title) values ('support-write', 'x') $$, '42501', null, 'support cannot create products');
+reset role;
+
+-- Admin ----------------------------------------------------------------------------------
+select pg_temp.act_as('00000000-0000-4000-a000-000000000002');
+select lives_ok($$ insert into public.staff_invites (email, role) values ('new-editor@test.local', 'editor') $$, 'admin can invite an editor');
+select throws_ok($$ insert into public.staff_invites (email, role) values ('new-owner@test.local', 'owner') $$, '42501', null, 'admin cannot invite an owner');
+select throws_ok($$ update public.profiles set role = 'admin' where id = '00000000-0000-4000-a000-000000000001' $$, '42501', null, 'admin cannot demote the owner');
+reset role;
+
+-- Audit ----------------------------------------------------------------------------------
+select ok(
+  exists (select 1 from public.audit_log where table_name = 'products' and actor_id = '00000000-0000-4000-a000-000000000003' and action = 'insert'),
+  'editor writes are audited with the actor'
+);
+
+select * from finish();
+rollback;
