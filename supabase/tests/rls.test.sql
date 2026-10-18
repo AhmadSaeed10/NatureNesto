@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(38);
+select plan(39);
 
 -- Fixtures: one user per role. Inserting into auth.users fires handle_new_user(), which
 -- creates the profile; roles are then set directly (auth.uid() is null here, so trusted).
@@ -103,10 +103,15 @@ select is(
   1,
   'removed variants are deleted'
 );
+-- A statement cannot see rows its own volatile function call inserts, so duplicate first.
+select lives_ok(
+  $$ select public.duplicate_product((select id from public.products where handle = 'test-saved')) $$,
+  'editor duplicates a product'
+);
 select is(
-  (select handle from public.products where id = public.duplicate_product((select id from public.products where handle = 'test-saved'))),
-  'test-saved-copy',
-  'duplicate gets a free handle'
+  (select status::text from public.products where handle = 'test-saved-copy'),
+  'draft',
+  'duplicate is a draft with a free handle'
 );
 update public.site_settings set store_name = 'Editor edit' where singleton;
 reset role;

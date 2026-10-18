@@ -19,7 +19,7 @@ Email info@naturenesto.com. Please do not open public issues for vulnerabilities
 
 ## What was tested (Stages A to C)
 
-- 38 pgTAP assertions in `supabase/tests/rls.test.sql` covering anon, a signed in non staff user, editor, support and admin: draft visibility, staff only tables, writes per role, role escalation, owner protection, site settings writes, media usage counts, product saves with variants, stock adjustments and their log, duplicate, and audit attribution. Validated against the hosted schema inside a rolled back transaction and run in CI on every PR.
+- 39 pgTAP assertions in `supabase/tests/rls.test.sql` covering anon, a signed in non staff user, editor, support and admin: draft visibility, staff only tables, writes per role, role escalation, owner protection, site settings writes, media usage counts, product saves with variants, stock adjustments and their log, duplicate, and audit attribution. Validated against the hosted schema inside a rolled back transaction and run in CI on every PR.
 - Supabase security advisors: no findings.
 - Media uploads go from the browser to Storage under the staff session; Storage policies allow writes for owner, admin and editor only. The server then validates the path, type, size and dimensions with zod before recording the asset, and removes the file if recording fails.
 - Product saves run in one database transaction (`save_product`, security invoker) so RLS and audit triggers apply to every row. Stock changes only go through `adjust_stock`, which writes an append only log with the actor.
