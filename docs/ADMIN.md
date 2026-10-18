@@ -15,15 +15,22 @@ Roles are enforced three times: `proxy.ts` (signed in), the admin layout (`requi
 
 ## Adding staff
 
-There is no public sign up. A staff member is added by inserting an invite:
+There is no public sign up. Owners and admins invite people in **Settings > Staff** (email and role). The person then opens `/admin/login`, enters the email and leaves the password empty. The server checks the invite, creates the account and emails a sign in link. The role is applied on first sign in.
 
-```sql
-insert into public.staff_invites (email, role) values ('name@example.com', 'editor');
-```
+- **Change role** or **Remove access** from the same list. Removing access also clears the invite, so signing in again does not bring the role back. There must always be at least one owner.
+- Admins cannot invite, change or remove owners.
+- Passwords are optional: anyone can set one in **Settings > Your account**.
 
-An owner or admin can do this today in the Supabase SQL editor (Stage H adds it to Admin Settings). The person then opens `/admin/login`, enters the email and leaves the password empty. The server checks the invite, creates the account and emails a sign in link. The role is applied on first sign in. To remove access, set `profiles.role` to null.
+## Admin areas built so far
 
-Passwords are optional. Staff can set one later from Admin Settings (Stage B).
+| Area | Who | What |
+| --- | --- | --- |
+| Media (`/admin/media`) | Owner, admin, editor | Upload images straight to the `media` bucket (photos over 2560 px are resized in the browser), search, rename, edit alt text, copy link, delete. Alt text is required unless an image is marked decorative. An image in use (product, collection, cover, logo) cannot be deleted; the card shows where it is used |
+| Settings > Store | Owner, admin | Store details, contact numbers, announcement bar, social links, SEO defaults, logo. Saved to `site_settings`; the storefront reads them from Stage D |
+| Settings > Staff | Owner, admin | Invite, change role, remove access, cancel invites |
+| Settings > Your account | Everyone | Set a password |
+
+Shipping zones, taxes and payment methods join Settings with checkout in Stage E. Redirects join with the CMS in Stage D.
 
 ## Supabase Auth settings (dashboard, one time)
 

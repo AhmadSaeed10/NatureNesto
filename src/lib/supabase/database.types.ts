@@ -1246,6 +1246,13 @@ export type Database = {
         Args: { p_key: string; p_limit: number; p_window_seconds: number }
         Returns: boolean
       }
+      media_usage: {
+        Args: { p_media_ids: string[] }
+        Returns: {
+          media_id: string
+          uses: number
+        }[]
+      }
     }
     Enums: {
       content_status: "draft" | "published"
