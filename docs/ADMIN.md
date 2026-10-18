@@ -30,7 +30,24 @@ There is no public sign up. Owners and admins invite people in **Settings > Staf
 | Settings > Staff | Owner, admin | Invite, change role, remove access, cancel invites |
 | Settings > Your account | Everyone | Set a password |
 
+| Products (`/admin/products`) | Owner, admin, editor | Search (title, handle, SKU; also from the sidebar), filter by status and collection, bulk status changes, soft delete and restore, inline status. Editor with options (up to three) and generated variants, prices in PKR, images from the media library (drag, or move buttons), tags, manual collections, categories and SEO. Duplicate creates a draft copy. CSV export and import |
+| Collections (`/admin/collections`) | Owner, admin, editor | Manual collections (pick and order products) and automatic ones (tag, type or vendor conditions, all must match). Categories tab for a nested category tree |
+| Inventory (`/admin/inventory`) | Owner, admin, editor | Stock per tracked variant, filters for low and out of stock, adjustments with a reason and note, recent changes log |
+
 Shipping zones, taxes and payment methods join Settings with checkout in Stage E. Redirects join with the CMS in Stage D.
+
+## How to add a product
+
+1. Upload its photos in **Media** (with alt text).
+2. **Products > Add product**: title (the handle fills in), description, images, and options if it comes in sizes or colours, then **Update variants from options**.
+3. Set each variant's price and starting stock. Add tags that match the storefront categories (`indoor-plants`, `pet-friendly`, `easy-care`, `orchids`, `large-plants`, `low-light`, `plant-care`, `outdoor-plants`, `pots-and-planters`) and badges as `badge:new`, `badge:pet-safe`, `badge:low-light`, `badge:easy-care` or `badge:bestseller`.
+4. Set status to **Active** and save. The category pages switch from the sample catalogue to live products as soon as a category has an active product.
+
+Stock never changes silently: the editor sets starting stock once, and every later change goes through **Inventory** (or a CSV import) and is logged in `inventory_adjustments`.
+
+## CSV format
+
+One row per variant, grouped by `Handle`. Product fields are read from the first row of each handle. Existing products are matched by handle and variants by SKU (or variant title when there is no SKU); a different `Stock` value is logged as an import adjustment. Prices are rupees. Images, collections and categories are not part of the file and are kept as they are. Cells starting with `=`, `+`, `-` or `@` are prefixed with `'` on export so spreadsheets do not run them as formulas.
 
 ## Supabase Auth settings (dashboard, one time)
 
@@ -47,6 +64,8 @@ Without the Supabase variables the storefront still works on the sample catalogu
 ## Migrations
 
 All schema lives in `supabase/migrations`, committed to git. No dashboard schema edits.
+
+The Supabase connector used during development cannot run migrations that contain `delete` or `drop` statements (it asks for a confirmation that cannot be answered from an agent session). Those migrations reach the hosted project only through the Migrate workflow, so the GitHub secrets below are required.
 
 1. Write a new file `supabase/migrations/<timestamp>_<name>.sql`.
 2. Open a PR. CI starts a throwaway local database, applies every migration and the seed, and runs the pgTAP tests in `supabase/tests`.
