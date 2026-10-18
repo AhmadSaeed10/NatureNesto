@@ -6,3 +6,4 @@ docs
 CLAUDE.md
 AGENTS.md
 .claude
+src/lib/supabase/database.types.ts
