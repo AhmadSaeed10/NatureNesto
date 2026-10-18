@@ -29,6 +29,9 @@ The live site is not reachable from the build environment. All homepage copy, li
 - ESLint, Prettier, absolute imports via `@/`
 - Deploy: GitHub + Vercel
 
+## Backend (Supabase)
+Project ref: uqxzuzejnyacrshssdpz (NatureNesto-Mumbai, ap-south-1). Secrets only in .env.local, Vercel env and GitHub Actions secrets, never in code, logs or commits. Service role key is server only. All schema changes are migrations in supabase/migrations. The database is the source of truth for products, orders, customers, media and CMS content. Admin lives at /admin (noindex, role gated). Follow docs/ADMIN.md.
+
 ## Commands
 - `npm run dev` start dev server
 - `npm run build` production build (must pass before any PR)
