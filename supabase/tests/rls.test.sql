@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(24);
+select plan(29);
 
 -- Fixtures: one user per role. Inserting into auth.users fires handle_new_user(), which
 -- creates the profile; roles are then set directly (auth.uid() is null here, so trusted).
@@ -30,6 +30,10 @@ insert into public.pages (handle, title, status) values
 insert into public.site_settings (store_name, email, address)
   select 'Test', 'test@test.local', 'Test' where not exists (select 1 from public.site_settings);
 insert into public.consultation_requests (source, name) values ('contact', 'Test lead');
+insert into public.media_assets (id, external_url, decorative) values
+  ('20000000-0000-4000-a000-000000000001', '/test.webp', true);
+insert into public.product_images (product_id, media_id) values
+  ('10000000-0000-4000-a000-000000000001', '20000000-0000-4000-a000-000000000001');
 
 create function pg_temp.act_as(user_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated')::text, true);
@@ -48,6 +52,7 @@ select is((select count(*)::int from public.consultation_requests), 0, 'anon can
 select is((select count(*)::int from public.audit_log), 0, 'anon cannot read the audit log');
 select throws_ok($$ insert into public.products (handle, title) values ('anon-write', 'x') $$, '42501', null, 'anon cannot write products');
 select throws_ok($$ insert into public.consultation_requests (source, name) values ('contact', 'x') $$, '42501', null, 'anon cannot insert leads directly');
+select throws_ok($$ select * from public.media_usage(array['20000000-0000-4000-a000-000000000001']::uuid[]) $$, '42501', null, 'anon cannot call media_usage');
 reset role;
 
 -- Signed-in, not staff (customer) --------------------------------------------------------
@@ -64,7 +69,14 @@ select lives_ok($$ insert into public.products (handle, title) values ('editor-w
 select is((select count(*)::int from public.consultation_requests), 0, 'editor cannot read leads');
 select throws_ok($$ insert into public.redirects (source, destination) values ('/editor', '/x') $$, '42501', null, 'editor cannot change redirects');
 select is((select count(*)::int from public.staff_invites), 0, 'editor cannot read staff invites');
+select is(
+  (select uses::int from public.media_usage(array['20000000-0000-4000-a000-000000000001']::uuid[])),
+  1,
+  'media_usage counts product images for staff'
+);
+update public.site_settings set store_name = 'Editor edit' where singleton;
 reset role;
+select isnt((select store_name from public.site_settings limit 1), 'Editor edit', 'editor cannot change site settings');
 
 -- Support --------------------------------------------------------------------------------
 select pg_temp.act_as('00000000-0000-4000-a000-000000000004');
@@ -77,7 +89,9 @@ select pg_temp.act_as('00000000-0000-4000-a000-000000000002');
 select lives_ok($$ insert into public.staff_invites (email, role) values ('new-editor@test.local', 'editor') $$, 'admin can invite an editor');
 select throws_ok($$ insert into public.staff_invites (email, role) values ('new-owner@test.local', 'owner') $$, '42501', null, 'admin cannot invite an owner');
 select throws_ok($$ update public.profiles set role = 'admin' where id = '00000000-0000-4000-a000-000000000001' $$, '42501', null, 'admin cannot demote the owner');
+select lives_ok($$ update public.site_settings set legal = 'Admin edit' where singleton $$, 'admin can update site settings');
 reset role;
+select is((select legal from public.site_settings limit 1), 'Admin edit', 'admin settings change is saved');
 
 -- Audit ----------------------------------------------------------------------------------
 select ok(
