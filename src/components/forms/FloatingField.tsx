@@ -9,7 +9,7 @@ interface FloatingFieldProps {
   name: string;
   label: string;
   control?: Control;
-  type?: "text" | "email" | "tel";
+  type?: "text" | "email" | "tel" | "password";
   autoComplete?: string;
   required?: boolean;
   options?: readonly string[];
