@@ -44,11 +44,18 @@ async function ensureStaffAccount(email: string): Promise<boolean> {
   // Case-insensitive exact match: escape the LIKE wildcards that are legal in emails.
   const pattern = email.replace(/[\\%_]/g, "\\$&");
   const [{ data: invite }, { data: profile }] = await Promise.all([
-    supabase.from("staff_invites").select("id, role").ilike("email", pattern).maybeSingle(),
+    supabase
+      .from("staff_invites")
+      .select("id, role, accepted_at")
+      .ilike("email", pattern)
+      .maybeSingle(),
     supabase.from("profiles").select("id, role").ilike("email", pattern).maybeSingle(),
   ]);
   if (profile?.role) return true;
   if (!invite) return false;
+  // An accepted invite whose account has no role means access was removed; it must not
+  // come back by signing in again.
+  if (profile && invite.accepted_at) return false;
 
   if (profile) {
     // An existing non-staff account (for example a customer) that was invited later: the
