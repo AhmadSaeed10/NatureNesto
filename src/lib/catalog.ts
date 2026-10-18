@@ -3,7 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { catalogCategories } from "@/content/catalog";
 import { sampleProducts } from "@/content/sample-products";
 import type { CatalogSlug, Product, ProductBadge } from "@/content/types";
-import { supabasePublicEnv } from "@/lib/supabase/env";
+import { mediaUrl } from "@/lib/media";
 import { createSupabasePublicClient } from "@/lib/supabase/server";
 
 export type CatalogSource = "supabase" | "sample";
@@ -30,14 +30,6 @@ const isSlug = (tag: string): tag is CatalogSlug => SLUGS.includes(tag);
 const isBadge = (value: string): value is ProductBadge =>
   (BADGES as readonly string[]).includes(value);
 const byPosition = <T extends { position: number }>(a: T, b: T): number => a.position - b.position;
-
-function mediaUrl(media: { external_url: string | null; storage_path: string | null }): string {
-  if (media.external_url) return media.external_url;
-  const env = supabasePublicEnv();
-  return env && media.storage_path
-    ? `${env.url}/storage/v1/object/public/media/${media.storage_path}`
-    : "";
-}
 
 async function fetchFromSupabase(slug: CatalogSlug): Promise<Product[] | null> {
   const supabase = createSupabasePublicClient();
