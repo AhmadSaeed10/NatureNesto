@@ -12,6 +12,8 @@ interface AdminSidebarProps {
   allowed: readonly string[];
   roleLabel: string;
   email: string;
+  /** Product search, for roles that manage the catalogue. */
+  showSearch: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -24,7 +26,13 @@ function isActive(pathname: string, href: string): boolean {
     : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AdminSidebar({ allowed, roleLabel, email, signOut }: AdminSidebarProps) {
+export function AdminSidebar({
+  allowed,
+  roleLabel,
+  email,
+  showSearch,
+  signOut,
+}: AdminSidebarProps) {
   const pathname = usePathname();
   // The menu remembers the page it was opened on, so navigating closes it.
   const [openOn, setOpenOn] = useState<string | null>(null);
@@ -67,6 +75,23 @@ export function AdminSidebar({ allowed, roleLabel, email, signOut }: AdminSideba
           open ? "flex" : "hidden",
         )}
       >
+        {showSearch ? (
+          <form role="search" action="/admin/products" className="flex gap-2 px-1">
+            <label htmlFor={`${navId}-search`} className="sr-only">
+              {copy.search}
+            </label>
+            <input
+              id={`${navId}-search`}
+              name="q"
+              type="search"
+              placeholder={copy.search}
+              className="min-h-(--size-tap) min-w-0 flex-1 rounded-pill border border-ink-muted bg-background px-4 text-sm"
+            />
+            <button type="submit" className="sr-only focus:not-sr-only">
+              {copy.searchSubmit}
+            </button>
+          </form>
+        ) : null}
         <nav aria-label={copy.nav}>
           <ul className="flex flex-col gap-0.5">
             {admin.sections.map((section) => {

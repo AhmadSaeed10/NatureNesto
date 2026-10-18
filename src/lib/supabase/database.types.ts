@@ -413,6 +413,50 @@ export type Database = {
           },
         ]
       }
+      inventory_adjustments: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          delta: number
+          id: string
+          note: string | null
+          reason: Database["public"]["Enums"]["stock_reason"]
+          stock_after: number
+          updated_at: string
+          variant_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          delta: number
+          id?: string
+          note?: string | null
+          reason: Database["public"]["Enums"]["stock_reason"]
+          stock_after: number
+          updated_at?: string
+          variant_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          delta?: number
+          id?: string
+          note?: string | null
+          reason?: Database["public"]["Enums"]["stock_reason"]
+          stock_after?: number
+          updated_at?: string
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_adjustments_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       media_assets: {
         Row: {
           alt: string
@@ -780,6 +824,7 @@ export type Database = {
           cost: number | null
           created_at: string
           id: string
+          low_stock_threshold: number
           option_values: Json
           position: number
           price: number
@@ -797,6 +842,7 @@ export type Database = {
           cost?: number | null
           created_at?: string
           id?: string
+          low_stock_threshold?: number
           option_values?: Json
           position?: number
           price: number
@@ -814,6 +860,7 @@ export type Database = {
           cost?: number | null
           created_at?: string
           id?: string
+          low_stock_threshold?: number
           option_values?: Json
           position?: number
           price?: number
@@ -1242,6 +1289,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      adjust_stock: {
+        Args: {
+          p_delta: number
+          p_note?: string
+          p_reason: Database["public"]["Enums"]["stock_reason"]
+          p_variant_id: string
+        }
+        Returns: number
+      }
+      duplicate_product: { Args: { p_id: string }; Returns: string }
       hit_rate_limit: {
         Args: { p_key: string; p_limit: number; p_window_seconds: number }
         Returns: boolean
@@ -1253,6 +1310,7 @@ export type Database = {
           uses: number
         }[]
       }
+      save_product: { Args: { p: Json }; Returns: string }
     }
     Enums: {
       content_status: "draft" | "published"
@@ -1271,6 +1329,15 @@ export type Database = {
       product_status: "draft" | "active" | "archived"
       quote_status: "draft" | "sent" | "accepted" | "declined" | "expired"
       staff_role: "owner" | "admin" | "editor" | "support"
+      stock_reason:
+        | "initial"
+        | "received"
+        | "correction"
+        | "damaged"
+        | "returned"
+        | "sold"
+        | "import"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1415,6 +1482,16 @@ export const Constants = {
       product_status: ["draft", "active", "archived"],
       quote_status: ["draft", "sent", "accepted", "declined", "expired"],
       staff_role: ["owner", "admin", "editor", "support"],
+      stock_reason: [
+        "initial",
+        "received",
+        "correction",
+        "damaged",
+        "returned",
+        "sold",
+        "import",
+        "other",
+      ],
     },
   },
 } as const
