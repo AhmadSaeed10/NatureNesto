@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(29);
+select plan(38);
 
 -- Fixtures: one user per role. Inserting into auth.users fires handle_new_user(), which
 -- creates the profile; roles are then set directly (auth.uid() is null here, so trusted).
@@ -74,6 +74,40 @@ select is(
   1,
   'media_usage counts product images for staff'
 );
+select lives_ok(
+  $$ select public.save_product('{"title":"Saved","handle":"test-saved","description":{"format":"plain","text":""},"status":"draft","tags":["indoor-plants"],"options":[{"name":"Size","values":["S","M"]}],"variants":[{"title":"S","sku":"T-S","price":1000,"option_values":{"Size":"S"},"initial_stock":5},{"title":"M","sku":"T-M","price":2000,"option_values":{"Size":"M"},"initial_stock":0}],"images":[]}'::jsonb) $$,
+  'editor saves a product with variants'
+);
+select is((select stock from public.product_variants where sku = 'T-S'), 5, 'starting stock is applied');
+select is(
+  (select count(*)::int from public.inventory_adjustments a join public.product_variants v on v.id = a.variant_id where v.sku = 'T-S' and a.reason = 'initial'),
+  1,
+  'starting stock is logged'
+);
+select is(public.adjust_stock((select id from public.product_variants where sku = 'T-S'), -2, 'sold'), 3, 'editor adjusts stock');
+select lives_ok(
+  format(
+    $$ select public.save_product(%L::jsonb) $$,
+    jsonb_build_object(
+      'id', (select id from public.products where handle = 'test-saved'),
+      'title', 'Saved', 'handle', 'test-saved', 'status', 'draft', 'options', '[]'::jsonb, 'images', '[]'::jsonb,
+      'variants', jsonb_build_array(jsonb_build_object(
+        'id', (select id from public.product_variants where sku = 'T-S'), 'title', 'Default', 'sku', 'T-S', 'price', 1000
+      ))
+    )
+  ),
+  'editor updates a product'
+);
+select is(
+  (select count(*)::int from public.product_variants v join public.products p on p.id = v.product_id where p.handle = 'test-saved'),
+  1,
+  'removed variants are deleted'
+);
+select is(
+  (select handle from public.products where id = public.duplicate_product((select id from public.products where handle = 'test-saved'))),
+  'test-saved-copy',
+  'duplicate gets a free handle'
+);
 update public.site_settings set store_name = 'Editor edit' where singleton;
 reset role;
 select isnt((select store_name from public.site_settings limit 1), 'Editor edit', 'editor cannot change site settings');
@@ -82,6 +116,14 @@ select isnt((select store_name from public.site_settings limit 1), 'Editor edit'
 select pg_temp.act_as('00000000-0000-4000-a000-000000000004');
 select ok((select count(*) from public.consultation_requests) >= 1, 'support reads leads');
 select throws_ok($$ insert into public.products (handle, title) values ('support-write', 'x') $$, '42501', null, 'support cannot create products');
+select throws_ok(
+  $$ select public.adjust_stock((select id from public.product_variants where sku = 'T-S'), 1, 'received') $$,
+  '42501', null, 'support cannot adjust stock'
+);
+select throws_ok(
+  $$ select public.save_product('{"title":"x","handle":"support-save","status":"draft","variants":[]}'::jsonb) $$,
+  '42501', null, 'support cannot save products'
+);
 reset role;
 
 -- Admin ----------------------------------------------------------------------------------
