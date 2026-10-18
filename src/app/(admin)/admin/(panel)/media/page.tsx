@@ -65,7 +65,7 @@ export default async function MediaPage({ searchParams }: PageProps<"/admin/medi
         )}
 
         {media.pageCount > 1 ? (
-          <nav aria-label={copy.pagination.page(page)} className="flex items-center gap-3">
+          <nav aria-label={copy.pagination.label} className="flex items-center gap-3">
             {page > 1 ? (
               <Link href={pageHref(query, page - 1)} className={PAGER}>
                 {copy.pagination.previous}

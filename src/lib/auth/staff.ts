@@ -58,6 +58,7 @@ export async function staffWithRole(roles: readonly StaffRole[]): Promise<StaffM
 /** Who may use each admin area. RLS enforces the same split on the data itself. */
 export const ACCESS = {
   media: ["owner", "admin", "editor"],
+  catalog: ["owner", "admin", "editor"],
   storeSettings: ["owner", "admin"],
   staff: ["owner", "admin"],
 } as const satisfies Record<string, readonly StaffRole[]>;

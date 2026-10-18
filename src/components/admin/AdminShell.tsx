@@ -1,6 +1,6 @@
 import { signOut } from "@/app/actions/admin-auth";
 import { admin } from "@/content/admin";
-import { ACCESS, type StaffMember } from "@/lib/auth/staff";
+import { type StaffMember, canAccess } from "@/lib/auth/staff";
 import { AdminSidebar } from "./AdminSidebar";
 
 const MAIN_ID = "admin-main";
@@ -12,7 +12,8 @@ interface AdminShellProps {
 
 function allowedSections(staff: StaffMember): string[] {
   const keys = ["home", "settings"];
-  if ((ACCESS.media as readonly string[]).includes(staff.role)) keys.push("media");
+  if (canAccess(staff.role, "media")) keys.push("media");
+  if (canAccess(staff.role, "catalog")) keys.push("products", "collections", "inventory");
   return keys;
 }
 
@@ -30,6 +31,7 @@ export function AdminShell({ staff, children }: AdminShellProps) {
       <AdminSidebar
         allowed={allowedSections(staff)}
         roleLabel={admin.roles[staff.role]}
+        showSearch={canAccess(staff.role, "catalog")}
         email={staff.email}
         signOut={signOut}
       />
