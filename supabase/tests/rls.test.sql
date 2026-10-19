@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(39);
+select plan(45);
 
 -- Fixtures: one user per role. Inserting into auth.users fires handle_new_user(), which
 -- creates the profile; roles are then set directly (auth.uid() is null here, so trusted).
@@ -30,6 +30,10 @@ insert into public.pages (handle, title, status) values
 insert into public.site_settings (store_name, email, address)
   select 'Test', 'test@test.local', 'Test' where not exists (select 1 from public.site_settings);
 insert into public.consultation_requests (source, name) values ('contact', 'Test lead');
+insert into public.blog_posts (handle, title, status, published_at) values
+  ('test-live-post', 'Live', 'published', now() - interval '1 day'),
+  ('test-scheduled-post', 'Scheduled', 'published', now() + interval '7 days'),
+  ('test-draft-post', 'Draft', 'draft', null);
 insert into public.media_assets (id, external_url, decorative) values
   ('20000000-0000-4000-a000-000000000001', '/test.webp', true);
 insert into public.product_images (product_id, media_id) values
@@ -113,6 +117,12 @@ select is(
   'draft',
   'duplicate is a draft with a free handle'
 );
+select lives_ok(
+  $$ insert into public.page_section_drafts (section_id, data)
+     select s.id, '{"headline":"Unpublished"}'::jsonb from public.page_sections s
+     join public.pages p on p.id = s.page_id where p.handle = 'test-published' or p.handle = 'home' limit 1 $$,
+  'editor saves a homepage section draft'
+);
 update public.site_settings set store_name = 'Editor edit' where singleton;
 reset role;
 select isnt((select store_name from public.site_settings limit 1), 'Editor edit', 'editor cannot change site settings');
@@ -139,6 +149,25 @@ select throws_ok($$ update public.profiles set role = 'admin' where id = '000000
 select lives_ok($$ update public.site_settings set legal = 'Admin edit' where singleton $$, 'admin can update site settings');
 reset role;
 select is((select legal from public.site_settings limit 1), 'Admin edit', 'admin settings change is saved');
+
+-- Drafts and scheduling stay private -----------------------------------------------------
+-- reset role keeps the previous user's JWT claims, so clear them to test a true visitor.
+select set_config('request.jwt.claims', '', true);
+select set_config('role', 'anon', true);
+select is((select count(*)::int from public.page_section_drafts), 0, 'anon cannot read section drafts');
+select is(
+  (select count(*)::int from public.blog_posts where handle like 'test-%-post'),
+  1,
+  'anon sees only live posts, not drafts or scheduled ones'
+);
+select throws_ok($$ insert into public.redirects (source, destination) values ('/anon', '/x') $$, '42501', null, 'anon cannot add redirects');
+reset role;
+select pg_temp.act_as('00000000-0000-4000-a000-000000000004');
+select is((select count(*)::int from public.page_section_drafts), 0, 'support cannot read section drafts');
+reset role;
+select pg_temp.act_as('00000000-0000-4000-a000-000000000005');
+select is((select count(*)::int from public.page_section_drafts), 0, 'customers cannot read section drafts');
+reset role;
 
 -- Audit ----------------------------------------------------------------------------------
 select ok(
