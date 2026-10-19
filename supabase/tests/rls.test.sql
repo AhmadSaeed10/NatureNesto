@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(45);
+select plan(60);
 
 -- Fixtures: one user per role. Inserting into auth.users fires handle_new_user(), which
 -- creates the profile; roles are then set directly (auth.uid() is null here, so trusted).
@@ -12,7 +12,8 @@ insert into auth.users (id, email) values
   ('00000000-0000-4000-a000-000000000002', 'admin@test.local'),
   ('00000000-0000-4000-a000-000000000003', 'editor@test.local'),
   ('00000000-0000-4000-a000-000000000004', 'support@test.local'),
-  ('00000000-0000-4000-a000-000000000005', 'customer@test.local');
+  ('00000000-0000-4000-a000-000000000005', 'customer@test.local'),
+  ('00000000-0000-4000-a000-000000000006', 'other@test.local');
 update public.profiles set role = 'owner' where id = '00000000-0000-4000-a000-000000000001';
 update public.profiles set role = 'admin' where id = '00000000-0000-4000-a000-000000000002';
 update public.profiles set role = 'editor' where id = '00000000-0000-4000-a000-000000000003';
@@ -38,6 +39,19 @@ insert into public.media_assets (id, external_url, decorative) values
   ('20000000-0000-4000-a000-000000000001', '/test.webp', true);
 insert into public.product_images (product_id, media_id) values
   ('10000000-0000-4000-a000-000000000001', '20000000-0000-4000-a000-000000000001');
+
+-- Commerce fixtures: two customers with one order and one address each.
+insert into public.customers (id, user_id, email) values
+  ('30000000-0000-4000-a000-000000000005', '00000000-0000-4000-a000-000000000005', 'customer@test.local'),
+  ('30000000-0000-4000-a000-000000000006', '00000000-0000-4000-a000-000000000006', 'other@test.local');
+insert into public.addresses (customer_id, full_name, phone, line1, city) values
+  ('30000000-0000-4000-a000-000000000005', 'Customer', '03001234567', 'Street 1', 'Lahore'),
+  ('30000000-0000-4000-a000-000000000006', 'Other', '03007654321', 'Street 2', 'Karachi');
+insert into public.orders (customer_id, email, phone, full_name, shipping_address, subtotal, total, payment_method) values
+  ('30000000-0000-4000-a000-000000000005', 'customer@test.local', '03001234567', 'Customer', '{}', 100000, 125000, 'cod'),
+  ('30000000-0000-4000-a000-000000000006', 'other@test.local', '03007654321', 'Other', '{}', 100000, 160000, 'cod');
+insert into public.discount_codes (code, kind, value) values ('TESTCODE', 'percentage', 10);
+insert into public.carts (id) values ('40000000-0000-4000-a000-000000000001');
 
 create function pg_temp.act_as(user_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated')::text, true);
@@ -167,6 +181,42 @@ select is((select count(*)::int from public.page_section_drafts), 0, 'support ca
 reset role;
 select pg_temp.act_as('00000000-0000-4000-a000-000000000005');
 select is((select count(*)::int from public.page_section_drafts), 0, 'customers cannot read section drafts');
+reset role;
+
+-- Commerce ------------------------------------------------------------------------------
+select set_config('request.jwt.claims', '', true);
+select set_config('role', 'anon', true);
+select is((select count(*)::int from public.orders), 0, 'anon cannot read orders');
+select is((select count(*)::int from public.customers), 0, 'anon cannot read customers');
+select is((select count(*)::int from public.discount_codes), 0, 'anon cannot read discount codes');
+select is((select count(*)::int from public.carts), 0, 'anon cannot read carts');
+select is(
+  (select count(*)::int from public.payment_methods where not enabled),
+  0,
+  'anon sees only enabled payment methods'
+);
+select ok((select count(*) from public.shipping_zones) >= 1, 'anon reads delivery zones for checkout');
+select throws_ok($$ select public.place_order('{}'::jsonb) $$, '42501', null, 'anon cannot call place_order');
+select throws_ok($$ select public.quote_cart('{}'::jsonb) $$, '42501', null, 'anon cannot call quote_cart');
+reset role;
+
+select pg_temp.act_as('00000000-0000-4000-a000-000000000005');
+select is((select count(*)::int from public.orders), 1, 'customer sees only their own order');
+select is((select count(*)::int from public.addresses), 1, 'customer sees only their own address');
+select throws_ok(
+  $$ insert into public.addresses (customer_id, full_name, phone, line1, city)
+     values ('30000000-0000-4000-a000-000000000006', 'x', '03000000000', 'x', 'x') $$,
+  '42501', null, 'customer cannot add an address to someone else'
+);
+select is((select count(*)::int from public.cart_items), 0, 'customer cannot read cart items');
+select throws_ok($$ insert into public.payment_methods (code, name) values ('sneaky', 'x') $$, '42501', null, 'customer cannot add payment methods');
+reset role;
+
+select pg_temp.act_as('00000000-0000-4000-a000-000000000004');
+select is((select count(*)::int from public.orders where email like '%@test.local'), 2, 'support reads all orders');
+reset role;
+select pg_temp.act_as('00000000-0000-4000-a000-000000000003');
+select is((select count(*)::int from public.orders), 0, 'editor cannot read orders');
 reset role;
 
 -- Audit ----------------------------------------------------------------------------------

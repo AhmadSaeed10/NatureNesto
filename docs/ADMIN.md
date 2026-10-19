@@ -27,6 +27,7 @@ There is no public sign up. Owners and admins invite people in **Settings > Staf
 | --- | --- | --- |
 | Media (`/admin/media`) | Owner, admin, editor | Upload images straight to the `media` bucket (photos over 2560 px are resized in the browser), search, rename, edit alt text, copy link, delete. Alt text is required unless an image is marked decorative. An image in use (product, collection, cover, logo) cannot be deleted; the card shows where it is used |
 | Settings > Store | Owner, admin | Store details, contact numbers, announcement bar, social links, SEO defaults, logo. Saved to `site_settings`; the storefront reads them from Stage D |
+| Settings > Shipping & payments | Owner, admin | Delivery zones (cities, fee, free delivery threshold), tax (rate, whether prices include it) and payment methods (show at checkout, name, instructions). Checkout uses the new values straight away |
 | Settings > Staff | Owner, admin | Invite, change role, remove access, cancel invites |
 | Settings > Your account | Everyone | Set a password |
 
@@ -36,7 +37,14 @@ There is no public sign up. Owners and admins invite people in **Settings > Staf
 
 | Content (`/admin/content`) | Owner, admin, editor (redirects: owner, admin) | Homepage sections, pages, blog, workshops, FAQ, navigation menus and redirects |
 
-Shipping zones, taxes and payment methods join Settings with checkout in Stage E.
+## Checkout (Stage E)
+
+- **Storefront flow:** product page (`/products/<handle>`), cart (`/cart`), checkout (`/checkout`), confirmation (`/orders/<number>`). Category tiles link to product pages once real products are active; sample products keep the WhatsApp enquiry.
+- **Guests** check out with email and phone. The confirmation link carries a private token, so only the buyer can open it. **Customers** can sign in at `/account/login` with an emailed link (no password) to see all orders with that email and save addresses. Guest orders join the account automatically when the same email signs in.
+- **Pricing** happens in the database (`cart_totals`), so the checkout preview and the placed order always agree. `place_order` runs in one transaction: it locks the variants, refuses oversells, applies the discount, decrements stock (logged in Inventory as "sold") and records the pending payment.
+- **Placeholders to confirm with the client:** delivery Lahore Rs 250, rest of Punjab Rs 400, rest of Pakistan Rs 600, free over Rs 15,000. GST 0 percent and included in prices. Cash on delivery on; bank transfer off. Edit them in Settings > Shipping & payments.
+- Card payments arrive in Stage G with the chosen gateway. No card data is ever stored.
+- Checkout needs the three Supabase environment variables on Vercel. Without them the cart icon is hidden and product pages show the WhatsApp enquiry only.
 
 ## How to edit content
 
