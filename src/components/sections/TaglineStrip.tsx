@@ -1,9 +1,10 @@
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { BrandIcon } from "@/components/ui/BrandIcon";
-import { taglineStrip } from "@/content/home";
+import { type SectionData, sectionFallbacks } from "@/lib/cms/sections";
 
 interface TaglineStripProps {
   id: string;
+  data?: SectionData<"tagline">;
 }
 
 // Typographic treatment only: the lead word stays upright, the rest sets in italic.
@@ -13,7 +14,8 @@ const splitLead = (text: string): [string, string] => {
   return [lead, rest.join(" ")];
 };
 
-export function TaglineStrip({ id }: TaglineStripProps) {
+export function TaglineStrip({ id, data = sectionFallbacks.tagline }: TaglineStripProps) {
+  const taglineStrip = data.items;
   return (
     <section id={id} className="scroll-mt-24">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">

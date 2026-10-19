@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { headerCta, headerNav } from "@/content/nav";
+import { headerCta as defaultCta, headerNav as defaultNav } from "@/content/nav";
 import { site } from "@/content/site";
+import type { Cta, NavLink as NavLinkData, SocialLink } from "@/content/types";
 import { ui } from "@/content/ui";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
@@ -11,7 +12,17 @@ import { MobileMenu } from "./MobileMenu";
 export const HEADER_ID = "site-header";
 export const HEADER_HOME_LINK_ID = "site-header-home";
 
-export function Header() {
+interface HeaderProps {
+  nav?: NavLinkData[];
+  cta?: Cta;
+  socials?: SocialLink[];
+}
+
+export function Header({
+  nav: headerNav = defaultNav,
+  cta: headerCta = defaultCta,
+  socials = [...site.socials],
+}: HeaderProps) {
   return (
     <header
       id={HEADER_ID}
@@ -53,7 +64,7 @@ export function Header() {
               {headerCta.label}
             </Button>
           </div>
-          <MobileMenu links={headerNav} cta={headerCta} socials={site.socials} />
+          <MobileMenu links={headerNav} cta={headerCta} socials={socials} />
         </div>
       </div>
     </header>

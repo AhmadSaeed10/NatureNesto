@@ -3,9 +3,14 @@ import { BambooAccent } from "@/components/ui/BambooAccent";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { DitherArt } from "@/components/ui/DitherArt";
 import { FrameCorners } from "@/components/ui/FrameCorners";
-import { valueProps } from "@/content/home";
+import { type SectionData, sectionFallbacks } from "@/lib/cms/sections";
 
-export function ValueProps() {
+interface ValuePropsProps {
+  data?: SectionData<"value_props">;
+}
+
+export function ValueProps({ data = sectionFallbacks.value_props }: ValuePropsProps) {
+  const valueProps = data.items;
   return (
     <section className="grain relative overflow-hidden bg-surface">
       <DitherArt className="absolute -right-16 bottom-0 h-full w-[60%] text-primary-dark opacity-[0.1] md:w-[38%]" />

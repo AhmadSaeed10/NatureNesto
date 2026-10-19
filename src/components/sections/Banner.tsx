@@ -4,11 +4,15 @@ import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { Button } from "@/components/ui/Button";
 import { FrameCorners } from "@/components/ui/FrameCorners";
-import { banner } from "@/content/home";
+import { type SectionData, sectionFallbacks } from "@/lib/cms/sections";
 
 const TITLE_ID = "banner-title";
 
-export function Banner() {
+interface BannerProps {
+  data?: SectionData<"banner">;
+}
+
+export function Banner({ data: banner = sectionFallbacks.banner }: BannerProps) {
   return (
     <section
       aria-labelledby={TITLE_ID}

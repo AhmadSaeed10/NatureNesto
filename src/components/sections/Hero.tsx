@@ -6,14 +6,18 @@ import { Button } from "@/components/ui/Button";
 import { FrameCorners } from "@/components/ui/FrameCorners";
 import { Icon } from "@/components/ui/Icon";
 import { TornEdge } from "@/components/ui/TornEdge";
-import { hero } from "@/content/home";
 import { ui } from "@/content/ui";
 import { HeroVideo } from "./HeroVideo";
+import { type SectionData, sectionFallbacks } from "@/lib/cms/sections";
 
 export const HERO_NEXT_ID = "tagline";
 const HERO_TITLE_ID = "hero-title";
 
-export function Hero() {
+interface HeroProps {
+  data?: SectionData<"hero">;
+}
+
+export function Hero({ data: hero = sectionFallbacks.hero }: HeroProps) {
   return (
     <section
       aria-labelledby={HERO_TITLE_ID}

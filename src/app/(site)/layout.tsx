@@ -5,30 +5,36 @@ import { HEADER_HOME_LINK_ID, Header } from "@/components/layout/Header";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { CursorFollower } from "@/components/motion/CursorFollower";
 import { MotionProvider } from "@/components/motion/MotionProvider";
-import { needHelp } from "@/content/home";
-import { site } from "@/content/site";
 import { ui } from "@/content/ui";
 import { MAIN_CONTENT_ID } from "@/lib/constants";
+import { getSiteChrome } from "@/lib/cms/data";
 
-const whatsappHref =
-  needHelp.channels.find((channel) => channel.kind === "whatsapp")?.href ?? `mailto:${site.email}`;
-
-// Storefront chrome. The admin route group has its own calmer shell.
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+// Storefront chrome, read from site settings and navigation menus (src/content fallback).
+// The admin route group has its own calmer shell.
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const chrome = await getSiteChrome();
   return (
     <MotionProvider>
       <SkipLink />
-      <AnnouncementBar
-        message={site.announcement}
-        socials={site.socials}
-        focusTargetId={HEADER_HOME_LINK_ID}
-      />
-      <Header />
+      {chrome.announcement.enabled ? (
+        <AnnouncementBar
+          message={chrome.announcement.message}
+          socials={chrome.socials}
+          focusTargetId={HEADER_HOME_LINK_ID}
+        />
+      ) : null}
+      <Header nav={chrome.headerNav} cta={chrome.headerCta} socials={chrome.socials} />
       <main id={MAIN_CONTENT_ID} tabIndex={-1} className="flex-1 focus:outline-none">
         {children}
       </main>
-      <Footer />
-      <FloatingWhatsApp href={whatsappHref} label={ui.whatsappFloat} />
+      <Footer
+        columns={chrome.footerColumns}
+        address={chrome.address}
+        email={chrome.email}
+        socials={chrome.socials}
+        legal={chrome.legal}
+      />
+      <FloatingWhatsApp href={chrome.whatsappHref} label={ui.whatsappFloat} />
       <CursorFollower label={ui.cursorView} />
     </MotionProvider>
   );

@@ -3,12 +3,17 @@ import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { BotanicalFrame } from "@/components/ui/BotanicalFrame";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Icon } from "@/components/ui/Icon";
-import { services, servicesEyebrow } from "@/content/services";
 import { cn } from "@/lib/utils";
+import { type SectionData, sectionFallbacks } from "@/lib/cms/sections";
 
 const TITLE_ID = "services-title";
 
-export function ServicesGrid() {
+interface ServicesGridProps {
+  data?: SectionData<"services">;
+}
+
+export function ServicesGrid({ data = sectionFallbacks.services }: ServicesGridProps) {
+  const { eyebrow: servicesEyebrow, services } = data;
   return (
     <section aria-labelledby={TITLE_ID} className="bg-background">
       <div className="mx-auto max-w-7xl px-4 pb-20 md:px-8 md:pb-32">
