@@ -41,4 +41,6 @@ jobs:
       - if: steps.secrets.outputs.ready == 'true'
         run: npx supabase link --project-ref "$SUPABASE_PROJECT_REF"
       - if: steps.secrets.outputs.ready == 'true'
-        run: npx supabase db push
+        # --include-all: a migration can be applied from development (via the connector)
+        # before an older one that only CI can apply, so out of order files are expected.
+        run: npx supabase db push --include-all

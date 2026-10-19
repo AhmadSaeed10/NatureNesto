@@ -10,8 +10,10 @@ import { requireSupabasePublicEnv, supabasePublicEnv } from "./env";
  * the signed-in user, so every query is subject to RLS.
  */
 export async function createSupabaseServerClient() {
-  const { url, anonKey } = requireSupabasePublicEnv();
+  // Cookies first: it marks the caller as request time, so a build without Supabase env
+  // never tries to prerender (and fail on) a signed in page.
   const cookieStore = await cookies();
+  const { url, anonKey } = requireSupabasePublicEnv();
 
   return createServerClient<Database>(url, anonKey, {
     cookies: {

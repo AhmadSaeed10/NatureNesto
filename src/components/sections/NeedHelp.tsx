@@ -3,8 +3,8 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { DitherArt } from "@/components/ui/DitherArt";
 import { Icon, type UiIconName } from "@/components/ui/Icon";
-import { needHelp } from "@/content/home";
 import type { ContactKind } from "@/content/types";
+import { type SectionData, sectionFallbacks } from "@/lib/cms/sections";
 
 const TITLE_ID = "need-help-title";
 
@@ -14,7 +14,11 @@ const ICONS: Record<ContactKind, UiIconName> = {
   email: "mail",
 };
 
-export function NeedHelp() {
+interface NeedHelpProps {
+  data?: SectionData<"need_help">;
+}
+
+export function NeedHelp({ data: needHelp = sectionFallbacks.need_help }: NeedHelpProps) {
   return (
     <section aria-labelledby={TITLE_ID} className="grain relative overflow-hidden bg-surface">
       <DitherArt className="absolute -bottom-10 -left-20 h-[90%] w-[55%] -scale-x-100 text-ink opacity-[0.07] md:w-[32%]" />

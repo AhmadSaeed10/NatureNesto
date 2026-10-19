@@ -14,6 +14,7 @@ function allowedSections(staff: StaffMember): string[] {
   const keys = ["home", "settings"];
   if (canAccess(staff.role, "media")) keys.push("media");
   if (canAccess(staff.role, "catalog")) keys.push("products", "collections", "inventory");
+  if (canAccess(staff.role, "content")) keys.push("content");
   return keys;
 }
 

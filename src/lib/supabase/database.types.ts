@@ -577,6 +577,38 @@ export type Database = {
         }
         Relationships: []
       }
+      page_section_drafts: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          section_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          section_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          section_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_section_drafts_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: true
+            referencedRelation: "page_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_sections: {
         Row: {
           created_at: string

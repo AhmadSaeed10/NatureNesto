@@ -3,11 +3,16 @@ import Link from "next/link";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { Icon } from "@/components/ui/Icon";
-import { categories, categoriesTitle } from "@/content/categories";
+import { type SectionData, sectionFallbacks } from "@/lib/cms/sections";
 
 const TITLE_ID = "plants-title";
 
-export function PlantsForEveryone() {
+interface PlantsForEveryoneProps {
+  data?: SectionData<"plants">;
+}
+
+export function PlantsForEveryone({ data = sectionFallbacks.plants }: PlantsForEveryoneProps) {
+  const { title: categoriesTitle, categories } = data;
   return (
     <section aria-labelledby={TITLE_ID}>
       <div className="mx-auto max-w-7xl px-4 pt-20 pb-28 md:px-8 md:pt-32 md:pb-40">

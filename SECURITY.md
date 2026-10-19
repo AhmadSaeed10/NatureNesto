@@ -17,9 +17,9 @@ Email info@naturenesto.com. Please do not open public issues for vulnerabilities
 | Payments (Stage G)  | Card data exposure, forged callbacks                         | No card data stored. Webhooks verify signatures                                                                                                                       |
 | Rich text (Stage D) | Stored XSS                                                   | Stored as JSON, sanitised on render                                                                                                                                   |
 
-## What was tested (Stages A to C)
+## What was tested (Stages A to D)
 
-- 39 pgTAP assertions in `supabase/tests/rls.test.sql` covering anon, a signed in non staff user, editor, support and admin: draft visibility, staff only tables, writes per role, role escalation, owner protection, site settings writes, media usage counts, product saves with variants, stock adjustments and their log, duplicate, and audit attribution. Validated against the hosted schema inside a rolled back transaction and run in CI on every PR.
+- 45 pgTAP assertions in `supabase/tests/rls.test.sql` covering anon, a signed in non staff user, editor, support and admin: draft visibility, staff only tables, writes per role, role escalation, owner protection, site settings writes, media usage counts, product saves with variants, stock adjustments and their log, duplicate, section drafts hidden from visitors, support and customers, scheduled and draft posts hidden, and audit attribution. Validated against the hosted schema inside a rolled back transaction and run in CI on every PR.
 - Supabase security advisors: no findings.
 - Media uploads go from the browser to Storage under the staff session; Storage policies allow writes for owner, admin and editor only. The server then validates the path, type, size and dimensions with zod before recording the asset, and removes the file if recording fails.
 - Product saves run in one database transaction (`save_product`, security invoker) so RLS and audit triggers apply to every row. Stock changes only go through `adjust_stock`, which writes an append only log with the actor.
@@ -28,6 +28,9 @@ Email info@naturenesto.com. Please do not open public issues for vulnerabilities
 - `/admin` redirects signed out visitors to `/admin/login`; the admin and auth routes are `noindex` and disallowed in robots.txt.
 
 ## Known gaps
+
+- Supabase advisor: leaked password protection is off. Turn it on in Authentication > Sign In / Providers (password security).
+- `/preview` answers HTTP 200 with the not found page for visitors (streamed 404); it reveals nothing, is noindex and disallowed in robots.txt.
 
 - Customer accounts and checkout arrive in Stage E with their own policies and tests.
 - Rate limit rows are not pruned yet; a cleanup job needs approval before it is scheduled.

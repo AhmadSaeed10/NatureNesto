@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { footerColumns, footerVisit } from "@/content/nav";
+import { footerColumns as defaultColumns, footerVisit } from "@/content/nav";
 import { site } from "@/content/site";
+import type { FooterColumn, SocialLink } from "@/content/types";
 import { ui } from "@/content/ui";
 import { Logo } from "@/components/ui/Logo";
 import { SocialLinks } from "@/components/ui/SocialLinks";
@@ -11,7 +12,21 @@ const LINK =
 const headingId = (heading: string): string =>
   `footer-${heading.toLowerCase().replace(/\s+/g, "-")}`;
 
-export function Footer() {
+interface FooterProps {
+  columns?: FooterColumn[];
+  address?: string;
+  email?: string;
+  socials?: SocialLink[];
+  legal?: string;
+}
+
+export function Footer({
+  columns: footerColumns = defaultColumns,
+  address = footerVisit.address,
+  email = site.email,
+  socials = [...site.socials],
+  legal = site.legal,
+}: FooterProps) {
   return (
     // Focus ring switches to a light colour: primaryDark on ink is below 3:1.
     <footer className="grain bg-ink text-background [--focus-ring:var(--color-background)]">
@@ -27,14 +42,12 @@ export function Footer() {
             </Link>
             <div>
               <h2 className="mb-3 eyebrow text-surface">{footerVisit.heading}</h2>
-              <address className="max-w-xs text-small text-surface not-italic">
-                {footerVisit.address}
-              </address>
+              <address className="max-w-xs text-small text-surface not-italic">{address}</address>
             </div>
-            <a href={`mailto:${site.email}`} className={LINK}>
-              {site.email}
+            <a href={`mailto:${email}`} className={LINK}>
+              {email}
             </a>
-            <SocialLinks links={site.socials} className="-ml-3" />
+            <SocialLinks links={socials} className="-ml-3" />
           </div>
 
           {footerColumns.map((column) => (
@@ -56,7 +69,7 @@ export function Footer() {
         </div>
 
         <div className="mt-16 border-t border-background/20 pt-6">
-          <p className="text-small text-surface">{site.legal}</p>
+          <p className="text-small text-surface">{legal}</p>
         </div>
       </div>
     </footer>

@@ -2,12 +2,17 @@ import { Drift } from "@/components/motion/Drift";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { StudioDrawing } from "@/components/ui/StudioDrawing";
-import { howItWorks, steps } from "@/content/steps";
 import { StepsTracker } from "./StepsTracker";
+import { type SectionData, sectionFallbacks } from "@/lib/cms/sections";
 
 const TITLE_ID = "how-it-works-title";
 
-export function HowItWorks() {
+interface HowItWorksProps {
+  data?: SectionData<"how_it_works">;
+}
+
+export function HowItWorks({ data: howItWorks = sectionFallbacks.how_it_works }: HowItWorksProps) {
+  const { steps } = howItWorks;
   return (
     <section aria-labelledby={TITLE_ID} className="relative">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 md:px-8 md:py-32 lg:grid-cols-[5fr_7fr] lg:gap-20">
