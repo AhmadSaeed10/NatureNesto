@@ -550,7 +550,12 @@ export const admin = {
   },
   settings: {
     title: "Settings",
-    tabs: { store: "Store", staff: "Staff", account: "Your account" },
+    tabs: {
+      store: "Store",
+      commerce: "Shipping & payments",
+      staff: "Staff",
+      account: "Your account",
+    },
     liveNote: "Changes appear on the storefront within moments of saving.",
     store: {
       details: {
@@ -586,6 +591,42 @@ export const admin = {
           "Choose an image from the media library. Until one is chosen the built in logo is used.",
         field: "Logo image",
         none: "Built in logo",
+      },
+    },
+    commerce: {
+      intro:
+        "Placeholder delivery rates and tax until the client confirms them. Checkout uses these values straight away.",
+      zones: {
+        title: "Delivery zones",
+        intro:
+          "Each city is matched to the zone that lists it. Cities not listed anywhere use the default zone.",
+        name: "Zone name",
+        cities: "Cities",
+        citiesHint: "Comma separated, for example Lahore, Kasur.",
+        defaultZone: "Default zone: every city not listed elsewhere.",
+        price: "Delivery fee (Rs)",
+        freeOver: "Free delivery over (Rs)",
+        freeOverHint: "Leave empty for no free delivery.",
+        active: "Offer delivery to this zone",
+        remove: "Remove zone",
+        removeConfirm: "Remove this delivery zone?",
+        add: "Add a zone",
+        addSubmit: "Add zone",
+      },
+      tax: {
+        title: "Tax",
+        label: "Tax name",
+        rate: "Rate (%)",
+        included: "Prices already include tax",
+        includedHint: "When off, tax is added at checkout on the discounted subtotal.",
+      },
+      payments: {
+        title: "Payment methods",
+        intro:
+          "Only enabled methods appear at checkout. Card payments arrive with the payment gateway.",
+        enabled: "Show at checkout",
+        name: "Name shown to customers",
+        instructions: "Instructions",
       },
     },
     staff: {

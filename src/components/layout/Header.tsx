@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { NavLink } from "@/components/ui/NavLink";
 import { HeaderScroll } from "./HeaderScroll";
+import { CartIndicator } from "@/components/shop/CartIndicator";
 import { MobileMenu } from "./MobileMenu";
 
 export const HEADER_ID = "site-header";
@@ -64,6 +65,7 @@ export function Header({
               {headerCta.label}
             </Button>
           </div>
+          <CartIndicator />
           <MobileMenu links={headerNav} cta={headerCta} socials={socials} />
         </div>
       </div>

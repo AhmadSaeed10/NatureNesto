@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { commerce } from "@/content/commerce";
 import { shop } from "@/content/shop";
 import type { Product } from "@/content/types";
 import { formatPrice } from "@/lib/format";
@@ -17,7 +19,7 @@ export function ProductCard({ product, whatsappHref, priority = false }: Product
   const enquiry = `${whatsappHref}?text=${encodeURIComponent(shop.whatsappMessage(product.name, price))}`;
 
   return (
-    <article className="group flex h-full flex-col">
+    <article className="group relative flex h-full flex-col">
       <div className="relative aspect-[4/5] overflow-hidden rounded-card bg-surface">
         <Image
           src={product.image.src}
@@ -45,7 +47,16 @@ export function ProductCard({ product, whatsappHref, priority = false }: Product
       </div>
 
       <div className="flex flex-1 flex-col gap-1 pt-4">
-        <h3 className="font-serif text-h4 text-ink">{product.name}</h3>
+        <h3 className="font-serif text-h4 text-ink">
+          {product.href ? (
+            // The whole card is clickable through this link's stretched hit area.
+            <Link href={product.href} className="after:absolute after:inset-0 after:content-['']">
+              {product.name}
+            </Link>
+          ) : (
+            product.name
+          )}
+        </h3>
         {product.size ? <p className="text-small text-ink-muted">{product.size}</p> : null}
         <p className="mt-1 flex items-baseline gap-2 text-ink">
           <span className="font-medium">{price}</span>
@@ -54,7 +65,18 @@ export function ProductCard({ product, whatsappHref, priority = false }: Product
           ) : null}
         </p>
         <div className="mt-auto pt-4">
-          {product.inStock ? (
+          {product.href ? (
+            // Live products are bought on their page; the button sits above the card link.
+            <Button
+              href={product.href}
+              variant="secondary"
+              withArrow
+              className="relative z-10 w-full sm:w-auto"
+              aria-label={`${commerce.product.view}: ${product.name}`}
+            >
+              {product.inStock ? commerce.product.view : shop.outOfStock}
+            </Button>
+          ) : product.inStock ? (
             <Button
               href={enquiry}
               target="_blank"

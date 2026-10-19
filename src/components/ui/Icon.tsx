@@ -13,7 +13,8 @@ export type UiIconName =
   | "facebook"
   | "instagram"
   | "linkedin"
-  | "twitter";
+  | "twitter"
+  | "bag";
 
 const PATHS: Record<UiIconName, ReactNode> = {
   "arrow-right": <path d="M4 12h15M13 6l6 6-6 6" />,
@@ -37,6 +38,12 @@ const PATHS: Record<UiIconName, ReactNode> = {
     </>
   ),
   close: <path d="M6 6l12 12M18 6 6 18" />,
+  bag: (
+    <>
+      <path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z" />
+      <path d="M9 10V7a3 3 0 0 1 6 0v3" />
+    </>
+  ),
   facebook: (
     <path d="M14.5 8H17V4.5h-2.5A4.5 4.5 0 0 0 10 9v2H7.5v3.5H10V20h3.5v-5.5H16l.5-3.5h-3V9a1 1 0 0 1 1-1Z" />
   ),

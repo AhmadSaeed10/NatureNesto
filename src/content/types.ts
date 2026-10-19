@@ -127,4 +127,6 @@ export interface Product {
   size?: string;
   badges?: ProductBadge[];
   inStock: boolean;
+  /** Product page, for live catalogue products; sample products have none. */
+  href?: string;
 }

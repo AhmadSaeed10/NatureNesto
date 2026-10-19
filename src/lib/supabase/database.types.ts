@@ -14,6 +14,22 @@ export type Database = {
   }
   public: {
     Tables: {
+      customers: CompactTable<{ id: string; user_id: string | null; email: string; full_name: string | null; phone: string | null; accepts_marketing: boolean; tags: string[]; deleted_at: string | null; created_at: string; updated_at: string }, "id" | "user_id" | "full_name" | "phone" | "accepts_marketing" | "tags" | "deleted_at" | "created_at" | "updated_at", []>
+      addresses: CompactTable<{ id: string; customer_id: string; full_name: string; phone: string; line1: string; line2: string | null; area: string | null; city: string; province: string | null; postal_code: string | null; country: string; is_default: boolean; created_at: string; updated_at: string }, "id" | "line2" | "area" | "province" | "postal_code" | "country" | "is_default" | "created_at" | "updated_at", [{ foreignKeyName: "addresses_customer_id_fkey"; columns: ["customer_id"]; isOneToOne: false; referencedRelation: "customers"; referencedColumns: ["id"] }]>
+      shipping_zones: CompactTable<{ id: string; name: string; cities: string[]; is_default: boolean; position: number; created_at: string; updated_at: string }, "id" | "cities" | "is_default" | "position" | "created_at" | "updated_at", []>
+      shipping_rates: CompactTable<{ id: string; zone_id: string; name: string; price: number; free_over: number | null; active: boolean; created_at: string; updated_at: string }, "id" | "free_over" | "active" | "created_at" | "updated_at", [{ foreignKeyName: "shipping_rates_zone_id_fkey"; columns: ["zone_id"]; isOneToOne: false; referencedRelation: "shipping_zones"; referencedColumns: ["id"] }]>
+      tax_settings: CompactTable<{ id: string; singleton: boolean; prices_include_tax: boolean; rate_bps: number; label: string; created_at: string; updated_at: string }, "id" | "singleton" | "prices_include_tax" | "rate_bps" | "label" | "created_at" | "updated_at", []>
+      payment_methods: CompactTable<{ id: string; code: string; name: string; instructions: string | null; enabled: boolean; position: number; created_at: string; updated_at: string }, "id" | "instructions" | "enabled" | "position" | "created_at" | "updated_at", []>
+      discount_codes: CompactTable<{ id: string; code: string; kind: Database["public"]["Enums"]["discount_kind"]; value: number; min_subtotal: number; usage_limit: number | null; per_customer_limit: number | null; used_count: number; starts_at: string | null; ends_at: string | null; active: boolean; created_at: string; updated_at: string }, "id" | "value" | "min_subtotal" | "usage_limit" | "per_customer_limit" | "used_count" | "starts_at" | "ends_at" | "active" | "created_at" | "updated_at", []>
+      carts: CompactTable<{ id: string; token: string; customer_id: string | null; status: string; discount_code: string | null; created_at: string; updated_at: string }, "id" | "token" | "customer_id" | "status" | "discount_code" | "created_at" | "updated_at", [{ foreignKeyName: "carts_customer_id_fkey"; columns: ["customer_id"]; isOneToOne: false; referencedRelation: "customers"; referencedColumns: ["id"] }]>
+      cart_items: CompactTable<{ id: string; cart_id: string; variant_id: string; quantity: number; created_at: string; updated_at: string }, "id" | "created_at" | "updated_at", [{ foreignKeyName: "cart_items_cart_id_fkey"; columns: ["cart_id"]; isOneToOne: false; referencedRelation: "carts"; referencedColumns: ["id"] }, { foreignKeyName: "cart_items_variant_id_fkey"; columns: ["variant_id"]; isOneToOne: false; referencedRelation: "product_variants"; referencedColumns: ["id"] }]>
+      orders: CompactTable<{ id: string; number: number; access_token: string; customer_id: string | null; email: string; phone: string; full_name: string; shipping_address: Json; notes: string | null; currency: string; subtotal: number; discount_total: number; shipping_total: number; tax_total: number; total: number; discount_code: string | null; payment_method: string; status: Database["public"]["Enums"]["order_status"]; payment_status: Database["public"]["Enums"]["payment_status"]; fulfillment_status: Database["public"]["Enums"]["fulfillment_status"]; placed_at: string; cancelled_at: string | null; created_at: string; updated_at: string }, "id" | "number" | "access_token" | "customer_id" | "notes" | "currency" | "discount_total" | "shipping_total" | "tax_total" | "discount_code" | "status" | "payment_status" | "fulfillment_status" | "placed_at" | "cancelled_at" | "created_at" | "updated_at", [{ foreignKeyName: "orders_customer_id_fkey"; columns: ["customer_id"]; isOneToOne: false; referencedRelation: "customers"; referencedColumns: ["id"] }]>
+      order_items: CompactTable<{ id: string; order_id: string; product_id: string | null; variant_id: string | null; title: string; variant_title: string | null; sku: string | null; image_url: string | null; unit_price: number; quantity: number; line_total: number; created_at: string; updated_at: string }, "id" | "product_id" | "variant_id" | "variant_title" | "sku" | "image_url" | "created_at" | "updated_at", [{ foreignKeyName: "order_items_order_id_fkey"; columns: ["order_id"]; isOneToOne: false; referencedRelation: "orders"; referencedColumns: ["id"] }, { foreignKeyName: "order_items_product_id_fkey"; columns: ["product_id"]; isOneToOne: false; referencedRelation: "products"; referencedColumns: ["id"] }, { foreignKeyName: "order_items_variant_id_fkey"; columns: ["variant_id"]; isOneToOne: false; referencedRelation: "product_variants"; referencedColumns: ["id"] }]>
+      order_status_history: CompactTable<{ id: string; order_id: string; status: string; note: string | null; actor_id: string | null; created_at: string; updated_at: string }, "id" | "note" | "actor_id" | "created_at" | "updated_at", [{ foreignKeyName: "order_status_history_order_id_fkey"; columns: ["order_id"]; isOneToOne: false; referencedRelation: "orders"; referencedColumns: ["id"] }]>
+      fulfillments: CompactTable<{ id: string; order_id: string; carrier: string | null; tracking_number: string | null; tracking_url: string | null; shipped_at: string | null; created_at: string; updated_at: string }, "id" | "carrier" | "tracking_number" | "tracking_url" | "shipped_at" | "created_at" | "updated_at", [{ foreignKeyName: "fulfillments_order_id_fkey"; columns: ["order_id"]; isOneToOne: false; referencedRelation: "orders"; referencedColumns: ["id"] }]>
+      payments: CompactTable<{ id: string; order_id: string; provider: string; status: string; amount: number; reference: string | null; raw_payload: Json | null; created_at: string; updated_at: string }, "id" | "status" | "reference" | "raw_payload" | "created_at" | "updated_at", [{ foreignKeyName: "payments_order_id_fkey"; columns: ["order_id"]; isOneToOne: false; referencedRelation: "orders"; referencedColumns: ["id"] }]>
+      refunds: CompactTable<{ id: string; order_id: string; amount: number; reason: string | null; created_at: string; updated_at: string }, "id" | "reason" | "created_at" | "updated_at", [{ foreignKeyName: "refunds_order_id_fkey"; columns: ["order_id"]; isOneToOne: false; referencedRelation: "orders"; referencedColumns: ["id"] }]>
+      discount_applications: CompactTable<{ id: string; order_id: string; code: string; kind: Database["public"]["Enums"]["discount_kind"]; amount: number; created_at: string; updated_at: string }, "id" | "created_at" | "updated_at", [{ foreignKeyName: "discount_applications_order_id_fkey"; columns: ["order_id"]; isOneToOne: false; referencedRelation: "orders"; referencedColumns: ["id"] }]>
       audit_log: {
         Row: {
           action: string
@@ -1342,10 +1358,16 @@ export type Database = {
           uses: number
         }[]
       }
+      place_order: { Args: { p: Json }; Returns: Json }
+      quote_cart: { Args: { p: Json }; Returns: Json }
       save_product: { Args: { p: Json }; Returns: string }
     }
     Enums: {
       content_status: "draft" | "published"
+      discount_kind: "percentage" | "fixed" | "free_shipping"
+      fulfillment_status: "unfulfilled" | "partial" | "fulfilled"
+      order_status: "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled"
+      payment_status: "unpaid" | "paid" | "refunded" | "partially_refunded"
       lead_source: "contact" | "consultation" | "quote" | "whatsapp" | "other"
       lead_status: "new" | "contacted" | "quoted" | "won" | "lost"
       page_section_type:
@@ -1498,6 +1520,10 @@ export const Constants = {
   public: {
     Enums: {
       content_status: ["draft", "published"],
+      discount_kind: ["percentage", "fixed", "free_shipping"],
+      fulfillment_status: ["unfulfilled", "partial", "fulfilled"],
+      order_status: ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"],
+      payment_status: ["unpaid", "paid", "refunded", "partially_refunded"],
       lead_source: ["contact", "consultation", "quote", "whatsapp", "other"],
       lead_status: ["new", "contacted", "quoted", "won", "lost"],
       page_section_type: [
@@ -1527,3 +1553,12 @@ export const Constants = {
     },
   },
 } as const
+
+// Hand written for tables added while the type generator could not reach the project;
+// the shape matches `supabase gen types` output. Regenerate to replace these.
+type CompactTable<Row, Optional extends keyof Row, Relationships extends unknown[]> = {
+  Row: Row
+  Insert: Omit<Row, Optional> & Partial<Pick<Row, Optional>>
+  Update: Partial<Row>
+  Relationships: Relationships
+}
