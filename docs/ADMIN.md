@@ -34,7 +34,22 @@ There is no public sign up. Owners and admins invite people in **Settings > Staf
 | Collections (`/admin/collections`) | Owner, admin, editor | Manual collections (pick and order products) and automatic ones (tag, type or vendor conditions, all must match). Categories tab for a nested category tree |
 | Inventory (`/admin/inventory`) | Owner, admin, editor | Stock per tracked variant, filters for low and out of stock, adjustments with a reason and note, recent changes log |
 
-Shipping zones, taxes and payment methods join Settings with checkout in Stage E. Redirects join with the CMS in Stage D.
+| Content (`/admin/content`) | Owner, admin, editor (redirects: owner, admin) | Homepage sections, pages, blog, workshops, FAQ, navigation menus and redirects |
+
+Shipping zones, taxes and payment methods join Settings with checkout in Stage E.
+
+## How to edit content
+
+The database is the source of truth for storefront content. Every read falls back to the copy in `src/content` when Supabase is unreachable or a block is invalid, so the site never renders empty. Saves revalidate the matching cache tag, so changes are live within moments with no redeploy.
+
+- **Homepage** (Content > Homepage): open a section, edit it, **Save draft**, then **Preview** (opens `/preview`, staff only, with drafts applied) and **Publish**. The live homepage only changes on publish. **Hide section** removes it from the homepage without deleting it. Drafts are stored in `page_section_drafts`, which only content staff can read.
+- **Pages** (Content > Pages): a published page with the handle `about`, `our-story`, `careers`, `shipping` or `workplace-policy` replaces that page's placeholder. Handles used by real routes (for example `contact` or `services`) are refused.
+- **Blog, workshops, FAQ**: `/blogs`, `/workshops` and `/faq` show the placeholder until the first item is published. A blog post with a future publish date stays hidden until then.
+- **Navigation**: the header links, the header button and the three footer columns.
+- **Redirects** (owners and admins): old address to new one. The redirects in `src/content/redirects.ts` run first; admin redirects apply to any other unknown address.
+- **Settings > Store** now drives the announcement bar, footer address, email, social links, the WhatsApp button and the homepage title and description.
+
+Rich text uses a small Markdown subset (`## heading`, `**bold**`, `*italic*`, `[link](https://...)`, `- list`, `1. list`, `> quote`). The editor has buttons for each and a preview tab. It is rendered from a parsed tree with an element allowlist, so stored content cannot inject HTML or scripts; unsafe links (`javascript:` and similar) are dropped.
 
 ## How to add a product
 
