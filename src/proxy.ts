@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
-import { ADMIN_HOME, ADMIN_LOGIN } from "@/lib/auth/paths";
+import { ACCOUNT_HOME, ACCOUNT_LOGIN, ADMIN_HOME, ADMIN_LOGIN } from "@/lib/auth/paths";
 import type { Database } from "@/lib/supabase/database.types";
 import { supabasePublicEnv } from "@/lib/supabase/env";
 
@@ -13,11 +13,14 @@ export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   const env = supabasePublicEnv();
   const { pathname, search } = request.nextUrl;
-  const isLogin = pathname === ADMIN_LOGIN;
+  const isLogin = pathname === ADMIN_LOGIN || pathname === ACCOUNT_LOGIN;
   const isAdmin = pathname === ADMIN_HOME || pathname.startsWith(`${ADMIN_HOME}/`);
+  const isAccount = pathname === ACCOUNT_HOME || pathname.startsWith(`${ACCOUNT_HOME}/`);
+  const loginFor = isAccount ? ACCOUNT_LOGIN : ADMIN_LOGIN;
 
   if (!env) {
-    if (isAdmin && !isLogin) return NextResponse.redirect(new URL(ADMIN_LOGIN, request.url));
+    if ((isAdmin || isAccount) && !isLogin)
+      return NextResponse.redirect(new URL(loginFor, request.url));
     return response;
   }
 
@@ -38,8 +41,8 @@ export async function proxy(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims.sub);
 
-  if (isAdmin && !isLogin && !signedIn) {
-    const login = new URL(ADMIN_LOGIN, request.url);
+  if ((isAdmin || isAccount) && !isLogin && !signedIn) {
+    const login = new URL(loginFor, request.url);
     login.searchParams.set("next", `${pathname}${search}`);
     return NextResponse.redirect(login);
   }
@@ -48,5 +51,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/auth/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/account", "/account/:path*", "/auth/:path*"],
 };

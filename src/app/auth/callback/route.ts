@@ -1,17 +1,19 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { ADMIN_LOGIN, safeAdminNext } from "@/lib/auth/paths";
+import { ACCOUNT_HOME, ACCOUNT_LOGIN, ADMIN_LOGIN, safeNext } from "@/lib/auth/paths";
 import { supabasePublicEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const otpType = z.enum(["magiclink", "email", "signup", "invite", "recovery", "email_change"]);
 
-/** Completes a magic link sign in (PKCE code, or token hash from a custom email template). */
+/** Completes a magic link sign in for staff or customers (PKCE code, or token hash). */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const next = safeAdminNext(searchParams.get("next"));
-  const failed = NextResponse.redirect(new URL(`${ADMIN_LOGIN}?error=callback`, request.url));
+  const next = safeNext(searchParams.get("next"));
+  // A failed customer link goes back to the customer sign in, not the admin one.
+  const login = next.startsWith(ACCOUNT_HOME) ? ACCOUNT_LOGIN : ADMIN_LOGIN;
+  const failed = NextResponse.redirect(new URL(`${login}?error=callback`, request.url));
   if (!supabasePublicEnv()) return failed;
 
   const supabase = await createSupabaseServerClient();
