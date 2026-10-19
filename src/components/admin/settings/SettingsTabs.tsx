@@ -7,11 +7,12 @@ import { cn } from "@/lib/utils";
 
 const TABS = [
   { key: "store", href: "/admin/settings" },
+  { key: "commerce", href: "/admin/settings/commerce" },
   { key: "staff", href: "/admin/settings/staff" },
   { key: "account", href: "/admin/settings/account" },
 ] as const;
 
-export function SettingsTabs({ allowed }: { allowed: readonly ("store" | "staff" | "account")[] }) {
+export function SettingsTabs({ allowed }: { allowed: readonly (typeof TABS)[number]["key"][] }) {
   const pathname = usePathname();
   return (
     <nav aria-label={admin.settings.title}>
