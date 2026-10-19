@@ -72,6 +72,7 @@ async function fetchFromSupabase(slug: CatalogSlug): Promise<Product[] | null> {
           .map((tag) => tag.slice(BADGE_PREFIX.length))
           .filter(isBadge),
         inStock,
+        href: `/products/${row.handle}`,
       },
     ];
   });

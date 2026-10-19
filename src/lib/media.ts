@@ -15,3 +15,10 @@ export function mediaUrl(media: MediaSource): string {
     ? `${env.url}/storage/v1/object/public/${MEDIA_BUCKET}/${media.storage_path}`
     : "";
 }
+
+/** Order and cart snapshots store either a site path, a full URL, or a bucket path. */
+export function storedImageUrl(value: string | null): string | null {
+  if (!value) return null;
+  if (value.startsWith("/") || value.startsWith("https://")) return value;
+  return mediaUrl({ external_url: null, storage_path: value }) || null;
+}

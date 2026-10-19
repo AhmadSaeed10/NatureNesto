@@ -12,6 +12,9 @@ export interface RateLimitRule {
 export const RATE_LIMITS = {
   login: { scope: "login", limit: 10, windowSeconds: 15 * 60 },
   loginEmail: { scope: "login-email", limit: 5, windowSeconds: 15 * 60 },
+  cart: { scope: "cart", limit: 120, windowSeconds: 10 * 60 },
+  checkout: { scope: "checkout", limit: 10, windowSeconds: 15 * 60 },
+  account: { scope: "account", limit: 5, windowSeconds: 15 * 60 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /** Best effort client address. Vercel sets x-forwarded-for; the first entry is the client. */
